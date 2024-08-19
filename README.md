@@ -5,7 +5,7 @@ on the [Django Tutorial project](https://docs.djangoproject.com/en/4.1/intro/), 
 additional features.
 
 This app was created as part of the [Individual Software Process](
-https://cpske.github.io/ISP) course at Kasetsart University(https://www.ku.ac.th).
+https://cpske.github.io/ISP) course at [Kasetsart University](https://www.ku.ac.th).
 
 ## UI
 
