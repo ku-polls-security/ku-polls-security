@@ -1,13 +1,169 @@
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'polls/style.css' %}">
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="KU Polls">
+        <meta name="author" content="TAGCH">
+        <meta name="keyword" content="html css javascript">
+        <title>Polls List</title>
+        <link rel="stylesheet" href="{% static 'polls/style.css' %}">
 
-{% if latest_question_list %}
-    <ul>
-    {% for question in latest_question_list %}
-        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}
+    </head>
+
+    <style>
+        li a {
+            color: green;
+        }
+        
+        body {
+            background: white url("{% static 'polls/images/background.png' %}") no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .popup {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none; /* Hidden by default */
+        }
+        
+        .popup-content {
+            text-align: center;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .hidden {
+            display: none;
+        }
+
+        /* Remove default list styling */
+        .popup-content ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .popup-content ul li {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <body>
+        <div id="popup" class="popup hidden">
+            <div class="popup-content">
+                <span class="close-button">&times;</span>
+                <ul>
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {% if latest_question_list %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Results</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for question in latest_question_list %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'polls:results' question.id %}">Results</a>
+                            </td>
+                            <td>
+                                {% if question.can_vote %}
+                                    <p>OPEN</p>
+                                {% else %}
+                                    <p>CLOSED</p>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No polls are available.</p>
+        {% endif %}
+    </body>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check if there are any messages
+            var popup = document.getElementById("popup");
+            var closeButton = document.querySelector(".close-button");
+
+            if (popup.querySelector("li")) {
+                // Display the popup
+                popup.classList.remove("hidden");
+                popup.style.display = 'block'; // Ensure the popup is visible
+            }
+
+            // Close the popup when the close button is clicked
+            closeButton.addEventListener("click", function() {
+                popup.classList.add("hidden");
+                popup.style.display = 'none'; // Hide the popup
+            });
+
+            // Optional: Close the popup when clicking outside of it
+            window.addEventListener("click", function(event) {
+                if (event.target === popup) {
+                    popup.classList.add("hidden");
+                    popup.style.display = 'none'; // Hide the popup
+                }
+            });
+        });
+    </script>
+
+</html>
