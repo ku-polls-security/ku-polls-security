@@ -1,6 +1,6 @@
 """Handles poll display, voting, and admin functions in the KU Polls app."""
 from typing import Any
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
