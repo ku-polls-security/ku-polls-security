@@ -1,9 +1,11 @@
 """Handles poll display, voting, and admin functions in the KU Polls app."""
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from typing import Any
+from django.http import HttpRequest, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.contrib import messages
 
 from .models import Choice, Question
 
@@ -39,6 +41,18 @@ class DetailView(generic.DetailView):
         """Excludes any questions that aren't published yet."""
         return Question.objects.filter(pub_date__lte=timezone.now())
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any):
+        """Handle GET requests."""
+        self.object = self.get_object()
+        if not self.object.is_published():
+            messages.error(request, "This poll is not published yet.")
+            return redirect('polls:index')
+        if not self.object.can_vote():
+            messages.error(request, "This poll is not allowed for voting.")
+            return redirect('polls:index')
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
 
 class ResultsView(generic.DetailView):
     """Determine the view of the result page."""
@@ -54,6 +68,11 @@ def vote(request, question_id):
     Receive the answer, then redirect to the result page.
     """
     question = get_object_or_404(Question, pk=question_id)
+    if not question.can_vote():
+        return render(request, 'polls/detail.html', {
+            'question': question,
+            'error_message': "This poll is not allowed for voting.",
+        })
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):

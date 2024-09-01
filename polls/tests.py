@@ -40,6 +40,63 @@ class QuestionModelTests(TestCase):
         recent_question = Question(pub_date=time)
         self.assertIs(recent_question.was_published_recently(), True)
 
+    def test_is_published_with_future_question(self):
+        """is_published() should return False for questions with a future pub_date."""
+        future_question = create_question(
+            question_text="Future question.", days=5
+            )
+        self.assertIs(future_question.is_published(), False)
+
+    def test_is_published_with_default_pub_date(self):
+        """is_published() should return True for questions with the default pub_date (now)."""
+        question = create_question(
+            question_text="Default pub_date question.", days=0
+            )
+        self.assertIs(question.is_published(), True)
+
+    def test_is_published_with_past_question(self):
+        """is_published() should return True for questions with a past pub_date."""
+        past_question = create_question(
+            question_text="Past question.", days=-5
+            )
+        self.assertIs(past_question.is_published(), True)
+
+    def test_cannot_vote_before_pub_date(self):
+        """Cannot vote if the pub_date is in the future."""
+        future_question = create_question(
+            question_text="Future question.", days=5
+            )
+        future_question.end_date = timezone.now() + datetime.timedelta(days=10)
+        future_question.save()
+        self.assertIs(future_question.can_vote(), False)
+
+    def test_can_vote_within_voting_period(self):
+        """Can vote if the current time is between pub_date and end_date."""
+        question = create_question(
+            question_text="Active voting period question.", days=-1
+            )
+        question.end_date = timezone.now() + datetime.timedelta(days=5)
+        question.save()
+        self.assertIs(question.can_vote(), True)
+
+    def test_cannot_vote_after_end_date(self):
+        """Cannot vote if the end_date is in the past."""
+        question = create_question(
+            question_text="Ended voting period question.", days=-10
+            )
+        question.end_date = timezone.now() - datetime.timedelta(days=5)
+        question.save()
+        self.assertIs(question.can_vote(), False)
+
+    def test_can_vote_with_no_end_date(self):
+        """Voting is allowed if there is no end_date specified."""
+        question = create_question(
+            question_text="No end date question.", days=-1
+            )
+        question.end_date = None  # No end date specified
+        question.save()
+        self.assertIs(question.can_vote(), True)
+
 
 def create_question(question_text, days):
     """
@@ -59,53 +116,40 @@ class QuestionIndexViewTests(TestCase):
         response = self.client.get(reverse('polls:index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "No polls are available.")
-        self.assertQuerysetEqual(response.context['latest_question_list'], [])
+        self.assertEqual(list(response.context['latest_question_list']), [])
 
     def test_past_question(self):
-        """
-        Questions with a pub_date in the past are displayed on the
-        index page.
-        """
+        """Questions with a pub_date in the past are displayed on the index page."""
         question = create_question(question_text="Past question.", days=-30)
         response = self.client.get(reverse('polls:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_question_list'],
-            [question],
-        )
+        self.assertEqual(
+            list(response.context['latest_question_list']), [question]
+            )
 
     def test_future_question(self):
-        """
-        Questions with a pub_date in the future aren't displayed on
-        the index page.
-        """
+        """Questions with a pub_date in the future aren't displayed on the index page."""
         create_question(question_text="Future question.", days=30)
         response = self.client.get(reverse('polls:index'))
         self.assertContains(response, "No polls are available.")
-        self.assertQuerysetEqual(response.context['latest_question_list'], [])
+        self.assertEqual(list(response.context['latest_question_list']), [])
 
     def test_future_question_and_past_question(self):
-        """
-        Even if both past and future questions exist, only past questions
-        are displayed.
-        """
+        """Even if both past and future questions exist, only past questions are displayed."""
         question = create_question(question_text="Past question.", days=-30)
         create_question(question_text="Future question.", days=30)
         response = self.client.get(reverse('polls:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_question_list'],
-            [question],
-        )
+        self.assertEqual(
+            list(response.context['latest_question_list']), [question]
+            )
 
     def test_two_past_questions(self):
-        """
-        The questions index page may display multiple questions.
-        """
+        """The questions index page may display multiple questions."""
         question1 = create_question(question_text="Past question 1.", days=-30)
         question2 = create_question(question_text="Past question 2.", days=-5)
         response = self.client.get(reverse('polls:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_question_list'],
-            [question2, question1],
+        self.assertEqual(
+            list(response.context['latest_question_list']),
+            [question2, question1]
         )
 
 
