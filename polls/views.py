@@ -6,8 +6,11 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
 
-from .models import Choice, Question
+from .models import Choice, Question, Vote
 
 
 class IndexView(generic.ListView):
@@ -61,28 +64,76 @@ class ResultsView(generic.DetailView):
     template_name = 'polls/results.html'
 
 
+@login_required
 def vote(request, question_id):
     """Determine the view of the vote page.
 
     Catch the error in the case where the choice does not exist.
     Receive the answer, then redirect to the result page.
     """
+    user = request.user
+    print("current user is", user.id, "login", user.username)
+    print("Real name:", user.first_name, user.last_name)
     question = get_object_or_404(Question, pk=question_id)
     if not question.can_vote():
+        messages.error(request, "This poll is not allowed for voting.")
         return render(request, 'polls/detail.html', {
             'question': question,
-            'error_message': "This poll is not allowed for voting.",
         })
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
+        messages.error(request, "You didn't select a choice.")
         return render(request, 'polls/detail.html', {
             'question': question,
-            'error_message': "You didn't select a choice.",
         })
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        return HttpResponseRedirect(
-            reverse('polls:results', args=(question.id,))
+    # Reference to the current user
+    this_user = request.user
+
+    # Get the user's vote
+    try:
+        vote = Vote.objects.get(user=this_user, choice_question=question)
+        vote.choice = selected_choice
+        vote.save()
+        messages.success(
+            request,
+            f"Your vote was changed to '{selected_choice.choice_text}'"
         )
+    except Vote.DoesNotExist:
+        # does not have a vote yet
+        vote = Vote.objects.create(
+            user=this_user, choice=selected_choice, choice_question=question
+            )
+        # automatically saved
+        messages.success(
+            request,
+            f"Your voted '{selected_choice.choice_text}'"
+        )
+
+    # marks this user as having voted
+    # request.session[f'has_voted_{question_id}'] = True
+
+    return HttpResponseRedirect(
+        reverse('polls:results', args=(question.id,))
+    )
+
+
+def signup(request):
+    """Register a new user."""
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # get named fields from the form data
+            username = form.cleaned_data.get('username')
+            # password input field is named 'password1'
+            raw_passwd = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_passwd)
+            login(request, user)
+        return redirect('polls:index')
+        # what if form is not valid?
+        # we should display a message in signup.html
+    else:
+        # create a user form and display it the signup page
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
