@@ -88,20 +88,18 @@ logger = logging.getLogger('polls')
 def vote(request, question_id):
     """Handle the voting process for a given question."""
     user = request.user
-    ip_addr = request.META.get('REMOTE_ADDR')
+    ip_addr = get_client_ip(request)
 
     logger.info(
-        f"User {user.username} voted from IP {ip_addr} on question {question_id}"
-        )
+        f"User {user.username} ({user.first_name} {user.last_name}) voted from IP {ip_addr} on question {question_id}"
+    )
 
-    # Get the question or return 404 if it doesn't exist
     question = get_object_or_404(Question, pk=question_id)
 
-    # Check if voting is allowed for the question
     if not question.can_vote():
         logger.warning(
-            f"User {user.username} tried to vote on a closed poll {question_id} from IP {ip_addr}"
-            )
+            f"User {user.username} tried to vote on a closed poll {question_id}"
+        )
         messages.error(request, "This poll is not allowed for voting.")
         return render(request, 'polls/detail.html', {'question': question})
 
@@ -109,33 +107,31 @@ def vote(request, question_id):
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
         logger.warning(
-            f"User {user.username} failed to select a valid choice for question {question_id} from IP {ip_addr}"
-            )
+            f"User {user.username} failed to select a valid choice for question {question_id}"
+        )
         messages.error(request, "You didn't select a valid choice.")
         return render(request, 'polls/detail.html', {'question': question})
 
-    # Handle the user's voting logic
     try:
         vote = Vote.objects.get(user=user, choice_question=question)
         vote.choice = selected_choice
         vote.save()
         messages.success(
-            request,
-            f"Your vote was changed to '{selected_choice.choice_text}'"
-            )
+            request, f"Your vote was changed to '{selected_choice.choice_text}'"
+        )
         logger.info(
-            f"User {user.username} changed their vote for question {question_id} to '{selected_choice.choice_text}' from IP {ip_addr}"
-            )
+            f"User {user.username} changed their vote for question {question_id} to '{selected_choice.choice_text}'"
+        )
     except Vote.DoesNotExist:
         Vote.objects.create(
             user=user, choice=selected_choice, choice_question=question
-            )
+        )
         messages.success(
             request, f"Your vote '{selected_choice.choice_text}' was recorded"
-            )
+        )
         logger.info(
-            f"User {user.username} voted for the first time on question {question_id} with '{selected_choice.choice_text}' from IP {ip_addr}"
-            )
+            f"User {user.username} voted for the first time on question {question_id} with '{selected_choice.choice_text}'"
+        )
 
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
@@ -163,21 +159,66 @@ def signup(request):
 
 @receiver(user_logged_in)
 def log_user_logged_in(sender, request, user, **kwargs):
-    """Log when a user logs in."""
-    ip_addr = request.META.get('REMOTE_ADDR')
+    """
+    Logs an info message when a user successfully logs in.
+
+    Args:
+        sender: The model class sending the signal (typically the `User` model).
+        request: The HTTP request object.
+        user: The user object who logged in.
+        **kwargs: Additional keyword arguments.
+    """
+    ip_addr = get_client_ip(request)
     logger.info(f"User {user.username} logged in from {ip_addr}")
 
 
 @receiver(user_logged_out)
 def log_user_logged_out(sender, request, user, **kwargs):
-    """Log when a user logs out."""
-    ip_addr = request.META.get('REMOTE_ADDR')
+    """
+    Logs an info message when a user logs out.
+
+    Args:
+        sender: The model class sending the signal (typically the `User` model).
+        request: The HTTP request object.
+        user: The user object who logged out.
+        **kwargs: Additional keyword arguments.
+    """
+    ip_addr = get_client_ip(request)
     logger.info(f"User {user.username} logged out from {ip_addr}")
 
 
 @receiver(user_login_failed)
 def log_user_login_failed(sender, credentials, request, **kwargs):
-    """Log failed login attempts."""
-    ip_addr = request.META.get('REMOTE_ADDR')
+    """
+    Logs a warning message when a login attempt fails.
+
+    Args:
+        sender: The model class sending the signal (typically the `User` model).
+        credentials: The credentials provided during the failed login attempt.
+        request: The HTTP request object.
+        **kwargs: Additional keyword arguments.
+    """
+    ip_addr = get_client_ip(request)
     username = credentials.get('username', 'unknown')
     logger.warning(f"Failed login attempt for {username} from {ip_addr}")
+
+
+def get_client_ip(request):
+    """
+    Get the visitor’s IP address from the request headers.
+
+    Handles scenarios where the IP address may be forwarded by proxies
+    or load balancers.
+
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        str: The client's IP address.
+    """
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR', '').strip()
+    return ip
