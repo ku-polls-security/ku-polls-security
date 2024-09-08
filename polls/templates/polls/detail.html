@@ -10,11 +10,12 @@
         </ul>
         {% endif %}
         {% for choice in question.choice_set.all %}
-            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"
+                {% if user_vote and user_vote.choice.id == choice.id %}checked{% endif %}>
             <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
         {% endfor %}
     </fieldset>
     <input type="submit" value="Vote">
     <a href="{% url 'polls:results' question.id %}">Results</a>
     <a href="{% url 'polls:index' %}">Back to List of Polls</a>
-    </form>
+</form>

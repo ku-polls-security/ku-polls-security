@@ -53,7 +53,20 @@ class DetailView(generic.DetailView):
         if not self.object.can_vote():
             messages.error(request, "This poll is not allowed for voting.")
             return redirect('polls:index')
-        context = self.get_context_data(object=self.object)
+
+        # Get the user's vote for this question if it exists
+        user_vote = None
+        if request.user.is_authenticated:
+            try:
+                user_vote = Vote.objects.get(
+                    user=request.user, choice_question=self.object
+                    )
+            except Vote.DoesNotExist:
+                user_vote = None
+
+        context = self.get_context_data(
+            object=self.object, user_vote=user_vote
+            )
         return self.render_to_response(context)
 
 
