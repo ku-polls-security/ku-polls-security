@@ -9,6 +9,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+import logging
+from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
+from django.dispatch import receiver
 
 from .models import Choice, Question, Vote
 
@@ -77,58 +80,64 @@ class ResultsView(generic.DetailView):
     template_name = 'polls/results.html'
 
 
+# Get a logger instance
+logger = logging.getLogger('polls')
+
+
 @login_required
 def vote(request, question_id):
-    """Determine the view of the vote page.
-
-    Catch the error in the case where the choice does not exist.
-    Receive the answer, then redirect to the result page.
-    """
+    """Handle the voting process for a given question."""
     user = request.user
-    print("current user is", user.id, "login", user.username)
-    print("Real name:", user.first_name, user.last_name)
+    ip_addr = request.META.get('REMOTE_ADDR')
+
+    logger.info(
+        f"User {user.username} voted from IP {ip_addr} on question {question_id}"
+        )
+
+    # Get the question or return 404 if it doesn't exist
     question = get_object_or_404(Question, pk=question_id)
+
+    # Check if voting is allowed for the question
     if not question.can_vote():
+        logger.warning(
+            f"User {user.username} tried to vote on a closed poll {question_id} from IP {ip_addr}"
+            )
         messages.error(request, "This poll is not allowed for voting.")
-        return render(request, 'polls/detail.html', {
-            'question': question,
-        })
+        return render(request, 'polls/detail.html', {'question': question})
+
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
-        messages.error(request, "You didn't select a choice.")
-        return render(request, 'polls/detail.html', {
-            'question': question,
-        })
-    # Reference to the current user
-    this_user = request.user
+        logger.warning(
+            f"User {user.username} failed to select a valid choice for question {question_id} from IP {ip_addr}"
+            )
+        messages.error(request, "You didn't select a valid choice.")
+        return render(request, 'polls/detail.html', {'question': question})
 
-    # Get the user's vote
+    # Handle the user's voting logic
     try:
-        vote = Vote.objects.get(user=this_user, choice_question=question)
+        vote = Vote.objects.get(user=user, choice_question=question)
         vote.choice = selected_choice
         vote.save()
         messages.success(
             request,
             f"Your vote was changed to '{selected_choice.choice_text}'"
-        )
-    except Vote.DoesNotExist:
-        # does not have a vote yet
-        vote = Vote.objects.create(
-            user=this_user, choice=selected_choice, choice_question=question
             )
-        # automatically saved
+        logger.info(
+            f"User {user.username} changed their vote for question {question_id} to '{selected_choice.choice_text}' from IP {ip_addr}"
+            )
+    except Vote.DoesNotExist:
+        Vote.objects.create(
+            user=user, choice=selected_choice, choice_question=question
+            )
         messages.success(
-            request,
-            f"Your voted '{selected_choice.choice_text}'"
-        )
+            request, f"Your vote '{selected_choice.choice_text}' was recorded"
+            )
+        logger.info(
+            f"User {user.username} voted for the first time on question {question_id} with '{selected_choice.choice_text}' from IP {ip_addr}"
+            )
 
-    # marks this user as having voted
-    # request.session[f'has_voted_{question_id}'] = True
-
-    return HttpResponseRedirect(
-        reverse('polls:results', args=(question.id,))
-    )
+    return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 
 def signup(request):
@@ -150,3 +159,25 @@ def signup(request):
         # create a user form and display it the signup page
         form = UserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+
+@receiver(user_logged_in)
+def log_user_logged_in(sender, request, user, **kwargs):
+    """Log when a user logs in."""
+    ip_addr = request.META.get('REMOTE_ADDR')
+    logger.info(f"User {user.username} logged in from {ip_addr}")
+
+
+@receiver(user_logged_out)
+def log_user_logged_out(sender, request, user, **kwargs):
+    """Log when a user logs out."""
+    ip_addr = request.META.get('REMOTE_ADDR')
+    logger.info(f"User {user.username} logged out from {ip_addr}")
+
+
+@receiver(user_login_failed)
+def log_user_login_failed(sender, credentials, request, **kwargs):
+    """Log failed login attempts."""
+    ip_addr = request.META.get('REMOTE_ADDR')
+    username = credentials.get('username', 'unknown')
+    logger.warning(f"Failed login attempt for {username} from {ip_addr}")
