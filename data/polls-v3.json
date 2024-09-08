@@ -1,0 +1,160 @@
+[
+{
+  "model": "polls.question",
+  "pk": 2,
+  "fields": {
+    "question_text": "Which programming language do you prefer for backend development?",
+    "pub_date": "2024-08-24T21:26:47.462Z",
+    "end_date": null
+  }
+},
+{
+  "model": "polls.question",
+  "pk": 3,
+  "fields": {
+    "question_text": "What is the most important factor when choosing a software development framework?",
+    "pub_date": "2024-08-24T21:29:03.904Z",
+    "end_date": null
+  }
+},
+{
+  "model": "polls.question",
+  "pk": 4,
+  "fields": {
+    "question_text": "Which operating system do you primarily use for development?",
+    "pub_date": "2024-09-01T06:30:13.991Z",
+    "end_date": "2024-09-01T06:32:13.991Z"
+  }
+},
+{
+  "model": "polls.question",
+  "pk": 5,
+  "fields": {
+    "question_text": "What is your preferred code editor?",
+    "pub_date": "2024-11-30T06:34:18.157Z",
+    "end_date": "2024-12-30T06:34:18.157Z"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 7,
+  "fields": {
+    "question": 2,
+    "choice_text": "Python"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 8,
+  "fields": {
+    "question": 2,
+    "choice_text": "Java"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 9,
+  "fields": {
+    "question": 2,
+    "choice_text": "Ruby"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 10,
+  "fields": {
+    "question": 2,
+    "choice_text": "Go"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 11,
+  "fields": {
+    "question": 2,
+    "choice_text": "PHP"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 12,
+  "fields": {
+    "question": 2,
+    "choice_text": "C#"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 13,
+  "fields": {
+    "question": 3,
+    "choice_text": "Performance"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 14,
+  "fields": {
+    "question": 3,
+    "choice_text": "Ease of use"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 15,
+  "fields": {
+    "question": 3,
+    "choice_text": "Community support"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 16,
+  "fields": {
+    "question": 3,
+    "choice_text": "Flexibility"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 17,
+  "fields": {
+    "question": 3,
+    "choice_text": "Security"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 18,
+  "fields": {
+    "question": 3,
+    "choice_text": "Other"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": 19,
+  "fields": {
+    "question": 2,
+    "choice_text": "Other"
+  }
+},
+{
+  "model": "polls.vote",
+  "pk": 1,
+  "fields": {
+    "user": 3,
+    "choice": 17,
+    "choice_question": 3
+  }
+},
+{
+  "model": "polls.vote",
+  "pk": 2,
+  "fields": {
+    "user": 3,
+    "choice": 7,
+    "choice_question": 2
+  }
+}
+]

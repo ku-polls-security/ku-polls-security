@@ -19,5 +19,13 @@
         {% endfor %}
     </table>
     <button type="button"><a href="{% url 'polls:index' %}">Back to List of Polls</a></button>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
     </center>
 </body>

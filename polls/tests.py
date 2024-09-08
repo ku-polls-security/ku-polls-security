@@ -2,10 +2,12 @@
 import datetime
 
 from django.test import TestCase
-from django.utils import timezone
 from django.urls import reverse
+from django.utils import timezone
+from django.contrib.auth.models import User
+from datetime import timedelta
 
-from .models import Question
+from .models import Question, Choice, Vote
 
 
 class QuestionModelTests(TestCase):
@@ -179,3 +181,41 @@ class QuestionDetailViewTests(TestCase):
         url = reverse('polls:detail', args=(past_question.id,))
         response = self.client.get(url)
         self.assertContains(response, past_question.question_text)
+
+class VoteViewTests(TestCase):
+    """Test the voting view for the KU Polls application."""
+
+    def setUp(self):
+        """Set up the initial data for the tests."""
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.question = create_question(question_text="Sample Question", days=-1)
+        self.choice = Choice.objects.create(question=self.question, choice_text="Choice 1")
+
+    def test_vote_success(self):
+        """Test that a valid vote is recorded and redirected to results."""
+        self.client.login(username='testuser', password='12345')
+        url = reverse('polls:vote', args=(self.question.id,))
+        response = self.client.post(url, {'choice': self.choice.id})
+        self.assertRedirects(response, reverse('polls:results', args=(self.question.id,)))
+        self.assertEqual(Vote.objects.count(), 1)
+        self.assertEqual(Vote.objects.first().choice, self.choice)
+
+    def test_vote_after_end_date(self):
+        """Attempting to vote after the question's end_date should fail."""
+        past_question = create_question(question_text="Past Question", days=-10)
+        past_question.end_date = timezone.now() - timezone.timedelta(days=1)
+        past_question.save()
+        url = reverse('polls:vote', args=(past_question.id,))
+        self.client.login(username='testuser', password='12345')
+        response = self.client.post(url, {'choice': self.choice.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "This poll is not allowed for voting.")
+
+    def test_user_cannot_vote_multiple_times(self):
+        """A user should not be able to vote multiple times for the same question."""
+        self.client.login(username='testuser', password='12345')
+        url = reverse('polls:vote', args=(self.question.id,))
+        self.client.post(url, {'choice': self.choice.id})
+        response = self.client.post(url, {'choice': self.choice.id})
+        self.assertEqual(response.status_code, 302)  # Should redirect
+        self.assertEqual(Vote.objects.count(), 1)  # User should only have one vote for this question
