@@ -8,13 +8,18 @@ additional features.
 This app was created as part of the [Individual Software Process](
 https://cpske.github.io/ISP) course at [Kasetsart University](https://www.ku.ac.th).
 
-## Install and Run
+## Installation
 
-to be added.
+Installation : follow the step in [Installation](https://github.com/TAGCH/ku-polls/blob/iteration4/Installation.md)
 
 ## Running the Application
 
-To be added.
+Running : run by typing this code in your terminal, cmd or powershell.
+```
+python manage.py runserver
+```
+
+** Please make sure that your path is in the ku-polls directory.
 
 ## Demo Users
 | Username  | Password        |
