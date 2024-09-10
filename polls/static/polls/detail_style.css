@@ -26,20 +26,20 @@ h1 {
 }
 .choice-label:hover {
     background-color: #fffbe0;
-    border-color: #f1e363;
+    border-color: #d4bf77;
 }
 input[type="radio"] {
     display: none;
 }
 input[type="radio"]:checked + .choice-label {
     background-color: #fef4c7;
-    border-color: #e5cd46;
+    border-color: #d4bf77;
 }
 .btn {
     margin-top: 20px;
     display: inline-block;
     padding: 10px 20px;
-    background-color: #6366f1;
+    background-color: #d4bf77;
     color: white;
     border: none;
     border-radius: 5px;
@@ -47,5 +47,5 @@ input[type="radio"]:checked + .choice-label {
     text-decoration: none;
 }
 .btn:hover {
-    background-color: #4f46e5;
+    background-color: #d4bf77;
 }
