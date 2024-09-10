@@ -46,6 +46,7 @@ LOGGING = {
     },
     'handlers': {
         'console': {
+            'level': 'WARNING',
             'class': 'logging.StreamHandler',
             'formatter': 'default',
         },
