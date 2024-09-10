@@ -57,9 +57,9 @@
                     <label for="choice{{ forloop.counter }}" class="choice-label">{{ choice.choice_text }}</label>
                 {% endfor %}
             </fieldset>
-            <input type="submit" value="Vote" class="btn">
-            <a href="{% url 'polls:results' question.id %}" class="btn">Results</a>
-            <a href="{% url 'polls:index' %}" class="btn">Back to List of Polls</a>
+            <button type="submit" class="btn">Vote</button>
+            <button type="button" class="btn" onclick="window.location.href='{% url 'polls:results' question.id %}'">Results</button>
+            <button type="button" class="btn" onclick="window.location.href='{% url 'polls:index' %}'">Back to List of Polls</button>
         </form>
     </div>
 </body>
