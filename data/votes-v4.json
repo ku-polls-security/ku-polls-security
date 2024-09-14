@@ -1,0 +1,20 @@
+[
+{
+  "model": "polls.vote",
+  "pk": 1,
+  "fields": {
+    "user": 3,
+    "choice": 17,
+    "choice_question": 3
+  }
+},
+{
+  "model": "polls.vote",
+  "pk": 2,
+  "fields": {
+    "user": 3,
+    "choice": 8,
+    "choice_question": 2
+  }
+}
+]

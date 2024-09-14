@@ -40,7 +40,7 @@
   "pk": 3,
   "fields": {
     "password": "pbkdf2_sha256$870000$PzBjVTvvwUEmGqYE4rlZLS$v5mzBs7eNwhlm3FwIuKRRnC3nWQ6vsXWBc6yyhRYKE0=",
-    "last_login": "2024-09-09T06:23:10.077Z",
+    "last_login": "2024-09-10T10:53:20.004Z",
     "is_superuser": false,
     "username": "TAGCH",
     "first_name": "TAGCH",
