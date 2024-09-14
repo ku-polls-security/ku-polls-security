@@ -8,6 +8,7 @@
         <meta name="keyword" content="html css javascript">
         <title>Polls List</title>
         <link rel="stylesheet" href="{% static 'polls/style.css' %}">
+        <link rel="stylesheet" href="{% static 'polls/detail_style.css' %}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     </head>
 
@@ -24,37 +25,43 @@
                     <!-- Logout Form -->
                     <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btnLogin-popup"onclick="Logout_Alert()" >Logout</button>
+                        <button type="submit" class="btnLogin-popup" onclick="Logout_Alert()">Logout</button>
                     </form>
                 </h4>
                 {% else %}
-                    <button class="btnLogin-popup" onclick="window.location.href='{% url 'login' %}?next={{request.path}}'; ">Login</button>
+                    <button class="btnLogin-popup" onclick="window.location.href='{% url 'login' %}?next={{request.path}}';">Login</button>
                 {% endif %}
             </nav>
-            
         </header>
     </div>
     <br><br><br><br><br>
-    <form action="{% url 'polls:vote' question.id %}" method="post">
-        {% csrf_token %}
-        <fieldset>
+
+    <div class="poll-container">
+        <form action="{% url 'polls:vote' question.id %}" method="post">
+            {% csrf_token %}
             <legend><h1>{{ question.question_text }}</h1></legend>
-            {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            <fieldset>
+                
+
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% for choice in question.choice_set.all %}
+                    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"
+                        {% if user_vote and user_vote.choice.id == choice.id %}checked{% endif %}>
+                    <label for="choice{{ forloop.counter }}" class="choice-label">{{ choice.choice_text }}</label>
                 {% endfor %}
-            </ul>
-            {% endif %}
-            {% for choice in question.choice_set.all %}
-                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"
-                    {% if user_vote and user_vote.choice.id == choice.id %}checked{% endif %}>
-                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-            {% endfor %}
-        </fieldset>
-        <input type="submit" value="Vote">
-        <a href="{% url 'polls:results' question.id %}">Results</a>
-        <a href="{% url 'polls:index' %}">Back to List of Polls</a>
-    </form>
+            </fieldset>
+            <button type="submit" class="btn">Vote</button>
+            <button type="button" class="btn" onclick="window.location.href='{% url 'polls:results' question.id %}'">Results</button>
+            <button type="button" class="btn" onclick="window.location.href='{% url 'polls:index' %}'">Back to List of Polls</button>
+        </form>
+    </div>
 </body>
 </html>
+

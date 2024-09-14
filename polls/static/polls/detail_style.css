@@ -1,0 +1,51 @@
+.poll-container {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-weight: 2px;
+    font-family: Arial, sans-serif;
+}
+
+.choice-label {
+    display: block;
+    background-color: #f9f9f9;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+.choice-label:hover {
+    background-color: #fffbe0;
+    border-color: #d4bf77;
+}
+input[type="radio"] {
+    display: none;
+}
+input[type="radio"]:checked + .choice-label {
+    background-color: #fef4c7;
+    border-color: #d4bf77;
+}
+.btn {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #d4bf77;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+.btn:hover {
+    background-color: #d4bf77;
+}

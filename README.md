@@ -8,13 +8,23 @@ additional features.
 This app was created as part of the [Individual Software Process](
 https://cpske.github.io/ISP) course at [Kasetsart University](https://www.ku.ac.th).
 
-## Install and Run
+## Installation
 
-to be added.
+Installation : follow the step in [Installation](https://github.com/TAGCH/ku-polls/blob/iteration4/Installation.md)
 
 ## Running the Application
 
-To be added.
+Running : run by typing this code in your terminal, cmd or powershell.
+```
+python manage.py runserver
+```
+
+** Please make sure that your path is in the ku-polls directory.
+
+## Demo Admin
+| Username  | Password        | Email |
+|-----------|-----------------|-------|
+|   TestAdmin   | TestAdmin | Test@admin.com |
 
 ## Demo Users
 | Username  | Password        |
@@ -33,4 +43,5 @@ All project documents are in the [Project Wiki](../../wiki/Home).
 - [Iteration 1 Plan](../../wiki/Iteration%201%20Plan) and [Task Board](https://github.com/users/TAGCH/projects/6/views/2)
 - [Iteration 2 Plan](../../wiki/Iteration%202%20Plan) and [Task Board](https://github.com/users/TAGCH/projects/6/views/3)
 - [Iteration 3 Plan](../../wiki/Iteration%203%20Plan) and [Task Board](https://github.com/users/TAGCH/projects/6/views/4)
+- [Iteration 4 Plan](../../wiki/Iteration%204%20Plan) and [Task Board](https://github.com/users/TAGCH/projects/6/views/5)
 - [Domain Model](../../wiki/Domain%20Model)
