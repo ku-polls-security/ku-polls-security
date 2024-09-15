@@ -1,4 +1,4 @@
-[![Unit Tests](https://github.com/TAGCH/ku-polls/actions/workflows/ku-polls-unittest.yml/badge.svg)](https://github.com/TAGCH/ku-polls/actions/workflows/ku-polls-unittest.yml)
+[![Unit Tests](https://github.com/TAGCH/ku-polls/actions/workflows/ku-polls-unittest.yml/badge.svg)](https://github.com/TAGCH/ku-polls/actions/workflows/ku-polls-unittest.yml) [![Flake8](https://github.com/TAGCH/ci-demo/actions/workflows/python-flake8.yml/badge.svg)](https://github.com/TAGCH/ci-demo/actions/workflows/python-flake8.yml)
 ## KU Polls: Online Survey Questions 
 
 An application to conduct online polls and surveys based
