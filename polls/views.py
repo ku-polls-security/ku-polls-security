@@ -97,6 +97,30 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
 
+    def get_object(self, queryset=None):
+        """
+        Override get_object to handle non-existing questions.
+
+        If the question doesn't exist,
+        redirect to the index page with a message.
+        """
+        try:
+            return super().get_object(queryset)
+        except Http404:
+            messages.error(
+                self.request, "The poll you are looking for does not exist."
+                )
+            return None
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any):
+        """Handle GET requests."""
+        self.object = self.get_object()
+        if self.object is None:
+            return redirect('polls:index')
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
 
 # Get a logger instance
 logger = logging.getLogger('polls')
