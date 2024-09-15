@@ -48,7 +48,7 @@
         </tr>
         {% endfor %}
     </table>
-    <button type="button"><a href="{% url 'polls:index' %}">Back to List of Polls</a></button>
+    <button type="button" class="btnLogin-popup" onclick="window.location.href='{% url 'polls:index' %}'">Back to List of Polls</button>
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
