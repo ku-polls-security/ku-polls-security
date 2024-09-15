@@ -39,6 +39,8 @@ pip install -r requirements.txt
 
 - Copy code from [sample.env](sample.env) and paste it in `.env`
 
+- Set `DEBUG=True`
+
 ## 4. Run migration
 
 - Run migration.

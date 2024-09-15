@@ -1,6 +1,6 @@
 """Handles poll display, voting, and admin functions in the KU Polls app."""
 from typing import Any
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 import logging
-from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
+from django.contrib.auth.signals import user_logged_in, user_logged_out
+from django.contrib.auth.signals import user_login_failed
 from django.dispatch import receiver
 
 from .models import Choice, Question, Vote
@@ -47,9 +48,26 @@ class DetailView(generic.DetailView):
         """Excludes any questions that aren't published yet."""
         return Question.objects.filter(pub_date__lte=timezone.now())
 
+    def get_object(self, queryset=None):
+        """
+        Override get_object to handle non-existing questions.
+
+        If the question doesn't exist,
+        redirect to the index page with a message.
+        """
+        try:
+            return super().get_object(queryset)
+        except Http404:
+            messages.error(
+                self.request, "The poll you are looking for does not exist."
+                )
+            return None
+
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any):
         """Handle GET requests."""
         self.object = self.get_object()
+        if self.object is None:
+            return redirect('polls:index')
         if not self.object.is_published():
             messages.error(request, "This poll is not published yet.")
             return redirect('polls:index')
@@ -79,6 +97,30 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
 
+    def get_object(self, queryset=None):
+        """
+        Override get_object to handle non-existing questions.
+
+        If the question doesn't exist,
+        redirect to the index page with a message.
+        """
+        try:
+            return super().get_object(queryset)
+        except Http404:
+            messages.error(
+                self.request, "The poll you are looking for does not exist."
+                )
+            return None
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any):
+        """Handle GET requests."""
+        self.object = self.get_object()
+        if self.object is None:
+            return redirect('polls:index')
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
 
 # Get a logger instance
 logger = logging.getLogger('polls')
@@ -91,14 +133,16 @@ def vote(request, question_id):
     ip_addr = get_client_ip(request)
 
     logger.info(
-        f"User {user.username} ({user.first_name} {user.last_name}) voted from IP {ip_addr} on question {question_id}"
+        f"User {user.username} ({user.first_name} {user.last_name}) voted from"
+        f" IP {ip_addr} on question {question_id}"
     )
 
     question = get_object_or_404(Question, pk=question_id)
 
     if not question.can_vote():
         logger.warning(
-            f"User {user.username} tried to vote on a closed poll {question_id}"
+            f"User {user.username} tried to vote"
+            f"on a closed poll {question_id}"
         )
         messages.error(request, "This poll is not allowed for voting.")
         return render(request, 'polls/detail.html', {'question': question})
@@ -107,7 +151,8 @@ def vote(request, question_id):
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
         logger.warning(
-            f"User {user.username} failed to select a valid choice for question {question_id}"
+            f"User {user.username} failed to select a valid "
+            f"choice for question {question_id}"
         )
         messages.error(request, "You didn't select a valid choice.")
         return render(request, 'polls/detail.html', {'question': question})
@@ -117,10 +162,12 @@ def vote(request, question_id):
         vote.choice = selected_choice
         vote.save()
         messages.success(
-            request, f"Your vote was changed to '{selected_choice.choice_text}'"
+            request,
+            f"Your vote was changed to '{selected_choice.choice_text}'"
         )
         logger.info(
-            f"User {user.username} changed their vote for question {question_id} to '{selected_choice.choice_text}'"
+            f"User {user.username} changed their vote for question "
+            f"{question_id} to '{selected_choice.choice_text}'"
         )
     except Vote.DoesNotExist:
         Vote.objects.create(
@@ -130,7 +177,8 @@ def vote(request, question_id):
             request, f"Your vote '{selected_choice.choice_text}' was recorded"
         )
         logger.info(
-            f"User {user.username} voted for the first time on question {question_id} with '{selected_choice.choice_text}'"
+            f"User {user.username} voted for the first time on question "
+            f"{question_id} with '{selected_choice.choice_text}'"
         )
 
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
@@ -160,10 +208,10 @@ def signup(request):
 @receiver(user_logged_in)
 def log_user_logged_in(sender, request, user, **kwargs):
     """
-    Logs an info message when a user successfully logs in.
+    Info message when a user successfully logs in.
 
     Args:
-        sender: The model class sending the signal (typically the `User` model).
+        sender: The model class sending the signal(typically the `User` model).
         request: The HTTP request object.
         user: The user object who logged in.
         **kwargs: Additional keyword arguments.
@@ -175,10 +223,10 @@ def log_user_logged_in(sender, request, user, **kwargs):
 @receiver(user_logged_out)
 def log_user_logged_out(sender, request, user, **kwargs):
     """
-    Logs an info message when a user logs out.
+    Info message when a user successfully logs in.
 
     Args:
-        sender: The model class sending the signal (typically the `User` model).
+        sender: The model class sending the signal(typically the `User` model).
         request: The HTTP request object.
         user: The user object who logged out.
         **kwargs: Additional keyword arguments.
@@ -190,10 +238,10 @@ def log_user_logged_out(sender, request, user, **kwargs):
 @receiver(user_login_failed)
 def log_user_login_failed(sender, credentials, request, **kwargs):
     """
-    Logs a warning message when a login attempt fails.
+    Warning message whenever a login attempt fails.
 
     Args:
-        sender: The model class sending the signal (typically the `User` model).
+        sender: The model class sending the signal(typically the `User` model).
         credentials: The credentials provided during the failed login attempt.
         request: The HTTP request object.
         **kwargs: Additional keyword arguments.
