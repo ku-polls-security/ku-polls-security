@@ -133,14 +133,16 @@ def vote(request, question_id):
     ip_addr = get_client_ip(request)
 
     logger.info(
-        f"User {user.username} ({user.first_name} {user.last_name}) voted from IP {ip_addr} on question {question_id}"
+        f"User {user.username} ({user.first_name} {user.last_name}) voted from"
+        f" IP {ip_addr} on question {question_id}"
     )
 
     question = get_object_or_404(Question, pk=question_id)
 
     if not question.can_vote():
         logger.warning(
-            f"User {user.username} tried to vote on a closed poll {question_id}"
+            f"User {user.username} tried to vote"
+            f"on a closed poll {question_id}"
         )
         messages.error(request, "This poll is not allowed for voting.")
         return render(request, 'polls/detail.html', {'question': question})
@@ -149,7 +151,8 @@ def vote(request, question_id):
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
         logger.warning(
-            f"User {user.username} failed to select a valid choice for question {question_id}"
+            f"User {user.username} failed to select a valid "
+            f"choice for question {question_id}"
         )
         messages.error(request, "You didn't select a valid choice.")
         return render(request, 'polls/detail.html', {'question': question})
@@ -163,7 +166,8 @@ def vote(request, question_id):
             f"Your vote was changed to '{selected_choice.choice_text}'"
         )
         logger.info(
-            f"User {user.username} changed their vote for question {question_id} to '{selected_choice.choice_text}'"
+            f"User {user.username} changed their vote for question "
+            f"{question_id} to '{selected_choice.choice_text}'"
         )
     except Vote.DoesNotExist:
         Vote.objects.create(
@@ -173,7 +177,8 @@ def vote(request, question_id):
             request, f"Your vote '{selected_choice.choice_text}' was recorded"
         )
         logger.info(
-            f"User {user.username} voted for the first time on question {question_id} with '{selected_choice.choice_text}'"
+            f"User {user.username} voted for the first time on question "
+            f"{question_id} with '{selected_choice.choice_text}'"
         )
 
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
@@ -203,7 +208,7 @@ def signup(request):
 @receiver(user_logged_in)
 def log_user_logged_in(sender, request, user, **kwargs):
     """
-    Logs an info message when a user successfully logs in.
+    Info message when a user successfully logs in.
 
     Args:
         sender: The model class sending the signal(typically the `User` model).
@@ -218,7 +223,7 @@ def log_user_logged_in(sender, request, user, **kwargs):
 @receiver(user_logged_out)
 def log_user_logged_out(sender, request, user, **kwargs):
     """
-    Logs an info message when a user logs out.
+    Info message when a user successfully logs in.
 
     Args:
         sender: The model class sending the signal(typically the `User` model).
@@ -233,7 +238,7 @@ def log_user_logged_out(sender, request, user, **kwargs):
 @receiver(user_login_failed)
 def log_user_login_failed(sender, credentials, request, **kwargs):
     """
-    Logs a warning message when a login attempt fails.
+    Warning message whenever a login attempt fails.
 
     Args:
         sender: The model class sending the signal(typically the `User` model).
