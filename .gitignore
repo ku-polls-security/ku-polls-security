@@ -51,6 +51,9 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# Coverage configuration file (do not ignore)
+!.coveragerc
+
 # Translations
 *.mo
 *.pot
