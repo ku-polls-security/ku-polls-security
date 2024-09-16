@@ -1,0 +1,27 @@
+# .coveragerc configuration file for KU Polls project
+
+[run]
+# Exclude Python library files, virtual environments, and Django migrations
+omit =
+    /usr/*
+    /usr/local/*
+    .local/*
+    env/*
+    */migrations/*
+    */__init__.py
+    mysite/*  # Django project configuration files
+    manage.py
+
+[report]
+# Do not include __str__ or __repr__ methods in coverage report
+exclude_lines =
+    def __str__
+    def __repr__
+
+# Additional exclusions
+    pragma: no cover  # Lines marked with this will be ignored
+
+# Uncomment the next line if you want to show missed lines
+# show_missing = True
+
+# Add more configuration options if necessary
