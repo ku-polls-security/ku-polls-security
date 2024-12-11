@@ -10,6 +10,8 @@
     </p>
     <input type="hidden" name="next" value="{{next}}"/>
     </form>
+
+    <button class="btnLogin-popup" onclick="window.location.href='{% url 'signup' %}?next={{request.path}}'; ">Sign up</button>
     {# If you have a sign-up page, then add a link here #}
 </center>
 </body>

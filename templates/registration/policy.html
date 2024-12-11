@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consent Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+        .form-group .options {
+            margin-top: 5px;
+        }
+        .form-group .options label {
+            margin-right: 15px;
+        }
+        .submit-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h1>Consent Form</h1>
+    <p>Please review the statements below and indicate your consent choices.</p>
+
+    <form action="/submit-consent" method="POST">
+        <!-- Consent Statement 1 -->
+        <div class="form-group">
+            <label for="consent1">I consent to the collection and processing of my personal data as described in the Privacy Policy.</label>
+            <div class="options">
+                <label>
+                    <input type="radio" name="consent1" value="yes" required> Yes
+                </label>
+                <label>
+                    <input type="radio" name="consent1" value="no"> No
+                </label>
+            </div>
+        </div>
+
+        <!-- Consent Statement 2 -->
+        <div class="form-group">
+            <label for="consent2">I agree to receive communications related to updates and offers.</label>
+            <div class="options">
+                <label>
+                    <input type="radio" name="consent2" value="yes" required> Yes
+                </label>
+                <label>
+                    <input type="radio" name="consent2" value="no"> No
+                </label>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-button">Submit</button>
+    </form>
+</div>
+
+</body>
+</html>
