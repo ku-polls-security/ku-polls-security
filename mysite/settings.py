@@ -16,7 +16,6 @@ from decouple import config, Csv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -26,9 +25,7 @@ SECRET_KEY = config('SECRET_KEY', default='missing-secret-key', cast=str)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS',
-                       default='localhost,127.0.0.1',
-                       cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
 # Show debug messages and higher
 MESSAGE_LEVEL = 10
@@ -62,9 +59,9 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'polls': {  # This is your custom logger
+        'polls': {
             'handlers': ['console', 'file'],
-            'level': 'INFO',  # Change to DEBUG if you want more verbosity
+            'level': 'INFO',
             'propagate': False,
         },
     },
@@ -112,10 +109,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
-
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -123,16 +117,16 @@ DATABASES = {
     }
 }
 
-
 # Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 12,  # Enforces a 12-character minimum
+        },
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -142,37 +136,39 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# username & password authentication
+# Attempt to include optional PasswordCharacterValidator if the package is installed
+try:
+    from django_password_validators.password_character_requirements import PasswordCharacterValidator
+    AUTH_PASSWORD_VALIDATORS.append({
+        'NAME': 'django_password_validators.password_character_requirements.PasswordCharacterValidator',
+        'OPTIONS': {
+            'min_uppercase': 1,
+            'min_lowercase': 1,
+            'min_digits': 1,
+            'min_special': 1,
+        }
+    })
+except ImportError:
+    pass  # If the package isn't installed, this validator won't be used.
+
+# Authentication
 AUTHENTICATION_BACKENDS = [
    'django.contrib.auth.backends.ModelBackend',
 ]
 
-# Where to redirect visitor after login or logout
-LOGIN_REDIRECT_URL = 'polls:index'  # after login, show list of polls
-LOGOUT_REDIRECT_URL = 'polls:index'  # or any other path you want to redirect to
-
+LOGIN_REDIRECT_URL = '/polls/'
+LOGOUT_REDIRECT_URL = '/polls/'
 
 # Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = config('TIME_ZONE', cast=str, default='UTC')
-
 USE_I18N = True
-
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "polls/static",  # This allows Django to find your static files
+    BASE_DIR / "polls/static",
 ]
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
