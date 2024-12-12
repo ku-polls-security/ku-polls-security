@@ -189,19 +189,20 @@ def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            # get named fields from the form data
-            username = form.cleaned_data.get('username')
-            # password input field is named 'password1'
-            raw_passwd = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_passwd)
-            login(request, user)
-        return redirect('polls:index')
-        # what if form is not valid?
-        # we should display a message in signup.html
+            # Save the user instance
+            user = form.save()
+            messages.success(
+                request, f"Account created successfully for {user.username}!"
+                )
+            return redirect('login')  # Redirect to the login page
+        else:
+            messages.error(
+                request,
+                "There was an error with your submission. Please try again."
+                )
     else:
-        # create a user form and display it the signup page
         form = UserCreationForm()
+
     return render(request, 'registration/signup.html', {'form': form})
 
 
