@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import config, Csv
 
@@ -41,6 +42,7 @@ LOGGING = {
         'default': {
             'format': '{asctime} {levelname} {module} {message}',
             'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
         },
     },
     'handlers': {
@@ -123,7 +125,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -176,3 +177,16 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# File permission configuration
+log_file_path = BASE_DIR / 'debug.log'
+if os.path.exists(log_file_path):
+    try:
+        os.chmod(log_file_path, 0o600)  # Set read/write for owner only
+    except PermissionError:
+        print("Warning: Could not change permissions for the log file.")
+else:
+    # Create the file if it doesn't exist
+    with open(log_file_path, 'w'):
+        pass
+    os.chmod(log_file_path, 0o600)
