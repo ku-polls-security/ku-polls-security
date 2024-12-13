@@ -143,8 +143,7 @@ def vote(request, question_id):
 
     if not question.can_vote():
         logger.warning(
-            f"User {user.username} tried to vote"
-            f"on a closed poll {question_id}"
+            f"User {user.username} tried to vote on a closed poll {question_id}"
         )
         messages.error(request, "This poll is not allowed for voting.")
         return render(request, 'polls/detail.html', {'question': question})
