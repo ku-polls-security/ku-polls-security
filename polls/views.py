@@ -150,20 +150,13 @@ def vote(request, question_id):
 
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    # except (KeyError, Choice.DoesNotExist):
-    #     logger.warning(
-    #         f"User {user.username} failed to select a valid "
-    #         f"choice for question {question_id}"
-    #     )
-    #     messages.error(request, "You didn't select a valid choice.")
-    #     return render(request, 'polls/detail.html', {'question': question})
     except KeyError:
         logger.warning(f"Choice ID not found in POST data for user {user.username}")
         messages.error(request, "You didn't select a valid choice.")
         return render(request, 'polls/detail.html', {'question': question})
     except Choice.DoesNotExist:
         logger.warning(f"Invalid choice ID for question {question_id} by user {user.username}")
-        messages.error(request, "You didn't select a valid choice.")
+        messages.error(request, "Invalid choice selection.")
         return render(request, 'polls/detail.html', {'question': question})
 
     try:
@@ -262,6 +255,11 @@ def log_user_login_failed(sender, credentials, request, **kwargs):
     username = credentials.get('username', 'unknown')
     logger.warning(f"Failed login attempt for {username} from {ip_addr}")
 
+def custom_404(request, exception):
+    return render(request, 'polls/404.html', status=404)
+
+def custom_500(request):
+    return render(request, 'polls/500.html', status=500)
 
 def get_client_ip(request):
     """
