@@ -124,3 +124,7 @@ input[type="submit"]:hover {
     background-color: #b39b00;
 }
 
+p { 
+    text-indent: 30px;
+ }
+ 

@@ -207,17 +207,27 @@ def signup(request):
 def policy(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # get named fields from the form data
-            username = form.cleaned_data.get('username')
-            # password input field is named 'password1'
-            raw_passwd = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_passwd)
-            login(request, user)
-        return redirect('polls:index')
-        # what if form is not valid?
-        # we should display a message in signup.html
+        choice = request.POST.get('consent1', None)
+
+        if choice == 'yes':
+            if form.is_valid():
+                form.save()
+                # get named fields from the form data
+                username = form.cleaned_data.get('username')
+                # password input field is named 'password1'
+                raw_passwd = form.cleaned_data.get('password1')
+                user = authenticate(username=username, password=raw_passwd)
+            
+                login(request, user)
+            logger.info(f"user selected: {choice}")
+                
+            return redirect('polls:index')
+                # what if form is not valid?
+                # we should display a message in signup.html
+        
+        else:
+            messages.info(request, "You must agree to our policy to signup!") #inform user they didn't agreed to policies
+            return redirect('polls:index')
     else:
         # create a user form and display it the signup page
         form = UserCreationForm()
