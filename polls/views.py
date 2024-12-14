@@ -197,8 +197,9 @@ def consent_submission(request):
 def signup(request):
     """Register a new user."""
 
-    # if not request.session.get('consent_given', False):
-    #     return render(request, 'registration/signup.html', {'form': None})  # Display the consent modal
+    if not request.session.get('consent_given', False):
+        # return render(request, 'registration/signup.html', {'form': None})  # Display the consent modal
+        return redirect('signup')
     
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -221,15 +222,17 @@ def signup(request):
 
 def policy(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        # form = UserCreationForm(request.POST)
         choice = request.POST.get('consent1', None)
 
         if choice == 'yes':  
+            # Set a session variable to track consent
+            request.session['consent_given'] = True
             return redirect('signup')
 
         else:
             messages.info(request, "You must agree to our policy to signup!") #inform user they didn't agreed to policies
-            return redirect('polls:index')
+            return redirect('signup')
     else:
         # create a user form and display it the signup page
         form = UserCreationForm()

@@ -69,7 +69,7 @@
     
     <p>Please review the statements below and indicate your consent choices.</p>
 
-    <form id="consentForm" method="POST">
+    <form id="consentForm" method="POST" action="{% url 'signup' %}">
         <!-- Consent Statement 1 -->
         {% csrf_token %}
         <div class="form-group">
