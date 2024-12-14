@@ -1,6 +1,6 @@
 """Handles poll display, voting, and admin functions in the KU Polls app."""
 from typing import Any
-from django.http import HttpRequest, HttpResponseRedirect, Http404
+from django.http import HttpRequest, HttpResponseRedirect, Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
@@ -183,25 +183,40 @@ def vote(request, question_id):
 
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
+def consent_submission(request):
+    """Handles the submission of the consent form."""
+    if request.method == 'POST':
+        consent = request.POST.get('consent1')
+        if consent == 'yes':
+            request.session['consent_given'] = True
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'message': 'You must consent to proceed.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request.'})
 
 def signup(request):
     """Register a new user."""
+
+    # if not request.session.get('consent_given', False):
+    #     return render(request, 'registration/signup.html', {'form': None})  # Display the consent modal
+    
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            # get named fields from the form data
-            username = form.cleaned_data.get('username')
-            # password input field is named 'password1'
-            raw_passwd = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_passwd)
-            # login(request, user)
-        return redirect('policy')
-        # what if form is not valid?
-        # we should display a message in signup.html
+            # Save the user instance
+            user = form.save()
+            messages.success(
+                request, f"Account created successfully for {user.username}!"
+                )
+            return redirect('login')  # Redirect to the login page
+        else:
+            messages.error(
+                request,
+                "There was an error with your submission. Please try again."
+                )
     else:
-        # create a user form and display it the signup page
         form = UserCreationForm()
+
     return render(request, 'registration/signup.html', {'form': form})
 
 def policy(request):
@@ -209,22 +224,9 @@ def policy(request):
         form = UserCreationForm(request.POST)
         choice = request.POST.get('consent1', None)
 
-        if choice == 'yes':
-            if form.is_valid():
-                form.save()
-                # get named fields from the form data
-                username = form.cleaned_data.get('username')
-                # password input field is named 'password1'
-                raw_passwd = form.cleaned_data.get('password1')
-                user = authenticate(username=username, password=raw_passwd)
-            
-                login(request, user)
-            logger.info(f"user selected: {choice}")
-                
-            return redirect('polls:index')
-                # what if form is not valid?
-                # we should display a message in signup.html
-        
+        if choice == 'yes':  
+            return redirect('signup')
+
         else:
             messages.info(request, "You must agree to our policy to signup!") #inform user they didn't agreed to policies
             return redirect('polls:index')

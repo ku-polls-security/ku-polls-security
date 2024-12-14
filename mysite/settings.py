@@ -27,9 +27,6 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
-# Show debug messages and higher
-MESSAGE_LEVEL = 10
-
 # Logging
 LOGGING = {
     'version': 1,
@@ -59,16 +56,10 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'polls': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
     },
 }
 
 # Application definition
-
 INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'django.contrib.admin',
@@ -77,6 +68,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_password_validators',  # Ensure this package is installed
+    'axes',  # For rate-limiting authentication attempts
 ]
 
 MIDDLEWARE = [
@@ -87,6 +80,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',  # Rate-limiting middleware
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -125,35 +119,21 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
         'OPTIONS': {
-            'min_length': 12,  # Enforces a 12-character minimum
+            'min_length': 12,
         },
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'polls.validators.CustomPasswordValidator',
     },
 ]
 
-# Attempt to include optional PasswordCharacterValidator if the package is installed
-try:
-    from django_password_validators.password_character_requirements import PasswordCharacterValidator
-    AUTH_PASSWORD_VALIDATORS.append({
-        'NAME': 'django_password_validators.password_character_requirements.PasswordCharacterValidator',
-        'OPTIONS': {
-            'min_uppercase': 1,
-            'min_lowercase': 1,
-            'min_digits': 1,
-            'min_special': 1,
-        }
-    })
-except ImportError:
-    pass  # If the package isn't installed, this validator won't be used.
-
-# Authentication
+# Authentication backends
 AUTHENTICATION_BACKENDS = [
-   'django.contrib.auth.backends.ModelBackend',
+    'axes.backends.AxesBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 LOGIN_REDIRECT_URL = '/polls/'
@@ -172,3 +152,21 @@ STATICFILES_DIRS = [
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Axes settings for rate-limiting
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # Lockout time in hours
+AXES_ONLY_USER_FAILURES = True
+
+PASSWORD_HISTORY_COUNT = 5  # Prevent reuse of last 5 passwords
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
+
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_AGE = 1800  # 30 minutes

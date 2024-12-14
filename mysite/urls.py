@@ -26,7 +26,8 @@ urlpatterns = [
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('signup/', views.signup, name='signup'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('policy/', views.policy, name='policy'),
+
+    path('signup/', views.signup, name='signup'),
+    path('consent/', views.consent_submission, name='consent_submission'),
 ]
