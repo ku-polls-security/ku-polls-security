@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from datetime import timedelta
 
-from .models import Question, Choice, Vote
+from ..models import Question, Choice, Vote
 
 
 class QuestionModelTests(TestCase):
