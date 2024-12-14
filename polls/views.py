@@ -191,15 +191,32 @@ def signup(request):
         if form.is_valid():
             # Save the user instance
             user = form.save()
-            messages.success(
-                request, f"Account created successfully for {user.username}!"
+
+            # Authenticate the user explicitly to determine the backend
+            user = authenticate(
+                request,
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1']
+            )
+
+            if user:
+                login(request, user)  # Log in the user
+                messages.success(
+                    request,
+                    f"Account created successfully! Welcome, {user.username}!"
                 )
-            return redirect('login')  # Redirect to the login page
+                return redirect('polls:index')
+
+            # Handle edge cases (e.g., backend misconfiguration)
+            messages.error(
+                request,
+                "Authentication failed. Please try logging in."
+            )
         else:
             messages.error(
                 request,
                 "There was an error with your submission. Please try again."
-                )
+            )
     else:
         form = UserCreationForm()
 

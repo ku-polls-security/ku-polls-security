@@ -14,8 +14,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 650px;
-    padding: 20px;
-    margin-bottom: 5px;
+    padding: 10px;
 }
 
 /* Heading for the Sign-Up Form */
@@ -31,7 +30,7 @@ h2 {
 /* Form styles */
 form {
     background-color: #f8f8f8;
-    padding: 40px;
+    padding: 30px;
     padding-right: 50px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -125,4 +124,8 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
     background-color: #b39b00;
+}
+
+.login-link{
+    margin-top: 0px;
 }

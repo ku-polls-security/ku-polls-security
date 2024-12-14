@@ -31,6 +31,25 @@
         .password-field {
             position: relative;
         }
+        .back-link {
+            display: flex;
+            align-items: center;
+            font-size: 1.2em;
+            color:rgb(177, 155, 85);
+            text-decoration: none;
+            margin-bottom: 20px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            transition: transform 0.2s ease;
+            font-weight: bold;
+        }
+        .back-link i {
+            margin-right: 8px;
+        }
+        .back-link:hover {
+            transform: scale(1.1);
+        }
     </style>
     <script>
         function togglePasswordVisibility(inputId, iconId) {
@@ -55,6 +74,11 @@
 </head>
 <body>
     <div class="container">
+        <!-- Back link to polls page -->
+        <a href="/polls/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Polls
+        </a>
+
         <h2>Login</h2>
         <form method="post">
             {% csrf_token %}
