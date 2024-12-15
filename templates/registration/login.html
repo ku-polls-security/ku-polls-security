@@ -118,5 +118,11 @@
             <p>Don't have an account? <a href="http://127.0.0.1:8000/polls/signup/">Sign up here</a></p>
         </div>
     </div>
+    <script>
+        document.querySelectorAll("input").forEach(input => {
+            input.setAttribute("autocomplete", "off");
+        });
+    </script>
+
 </body>
 </html>

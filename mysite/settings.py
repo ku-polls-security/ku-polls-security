@@ -36,6 +36,7 @@ LOGGING = {
         'default': {
             'format': '{asctime} {levelname} {module} {message}',
             'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
         },
     },
     'handlers': {
@@ -72,6 +73,7 @@ INSTALLED_APPS = [
     'django_password_validators',  # Ensure this package is installed
     'axes',  # For rate-limiting authentication attempts
     'captcha',
+    'sslserver',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +85,24 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware',  # Rate-limiting middleware
+    'mysite.middleware.LogErrorMiddleware',
 ]
+
+# Secure headers
+SECURE_HSTS_SECONDS = 31536000  # Enforce HSTS for 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME sniffing
+SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filter
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'  # Restrict referrer information
+SESSION_COOKIE_SECURE = True  # Secure cookies with HTTPS
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+
+X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking
 
 ROOT_URLCONF = 'mysite.urls'
 
@@ -147,6 +166,15 @@ TIME_ZONE = os.environ.get('TIME_ZONE', 'UTC')
 USE_I18N = True
 USE_TZ = True
 
+# Security related
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') == 'True'  # Use only with HTTPS
+CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'True') == 'True'     # Use only with HTTPS
+SESSION_COOKIE_AGE = 1800  # 30 minutes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_HTTPONLY = True
+
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
@@ -172,8 +200,15 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
 ]
 
-SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') == 'True'
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_AGE = 1800  # 30 minutes
-
-CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'True') == 'True'
+# File permission configuration
+log_file_path = BASE_DIR / 'debug.log'
+if os.path.exists(log_file_path):
+    try:
+        os.chmod(log_file_path, 0o600)  # Set read/write for owner only
+    except PermissionError:
+        print("Warning: Could not change permissions for the log file.")
+else:
+    # Create the file if it doesn't exist
+    with open(log_file_path, 'w'):
+        pass
+    os.chmod(log_file_path, 0o600)

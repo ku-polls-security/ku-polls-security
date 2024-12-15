@@ -61,7 +61,8 @@ class DetailView(generic.DetailView):
         """
         try:
             return super().get_object(queryset)
-        except Http404:
+        except Http404 as e:
+            logger.error(f"Question not found: {e}")
             messages.error(
                 self.request, "The poll you are looking for does not exist."
                 )
@@ -110,7 +111,8 @@ class ResultsView(generic.DetailView):
         """
         try:
             return super().get_object(queryset)
-        except Http404:
+        except Http404 as e:
+            logger.error(f"Question not found: {e}")
             messages.error(
                 self.request, "The poll you are looking for does not exist."
                 )
@@ -137,7 +139,7 @@ def vote(request, question_id):
     ip_addr = get_client_ip(request)
 
     logger.info(
-        f"User {user.username} ({user.first_name} {user.last_name}) voted from"
+        f"User {user.username} voted from"
         f" IP {ip_addr} on question {question_id}"
     )
 
@@ -145,20 +147,20 @@ def vote(request, question_id):
 
     if not question.can_vote():
         logger.warning(
-            f"User {user.username} tried to vote"
-            f"on a closed poll {question_id}"
+            f"User {user.username} tried to vote on a closed poll {question_id}"
         )
         messages.error(request, "This poll is not allowed for voting.")
         return render(request, 'polls/detail.html', {'question': question})
 
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        logger.warning(
-            f"User {user.username} failed to select a valid "
-            f"choice for question {question_id}"
-        )
+    except KeyError:
+        logger.warning(f"Choice ID not found in POST data for user {user.username}")
         messages.error(request, "You didn't select a valid choice.")
+        return render(request, 'polls/detail.html', {'question': question})
+    except Choice.DoesNotExist:
+        logger.warning(f"Invalid choice ID for question {question_id} by user {user.username}")
+        messages.error(request, "Invalid choice selection.")
         return render(request, 'polls/detail.html', {'question': question})
 
     try:
@@ -245,7 +247,7 @@ def log_user_logged_in(sender, request, user, **kwargs):
 @receiver(user_logged_out)
 def log_user_logged_out(sender, request, user, **kwargs):
     """
-    Info message when a user successfully logs in.
+    Info message when a user successfully logs out.
 
     Args:
         sender: The model class sending the signal(typically the `User` model).
@@ -272,6 +274,11 @@ def log_user_login_failed(sender, credentials, request, **kwargs):
     username = credentials.get('username', 'unknown')
     logger.warning(f"Failed login attempt for {username} from {ip_addr}")
 
+def custom_404(request, exception):
+    return render(request, 'polls/404.html', status=404)
+
+def custom_500(request):
+    return render(request, 'polls/500.html', status=500)
 
 def get_client_ip(request):
     """
@@ -291,6 +298,9 @@ def get_client_ip(request):
         ip = x_forwarded_for.split(',')[0].strip()
     else:
         ip = request.META.get('REMOTE_ADDR', '').strip()
+    if not ip:
+        ip = '0.0.0.0'  # Fallback IP
+        logger.warning("Unable to determine client IP address")
     return ip
 
 

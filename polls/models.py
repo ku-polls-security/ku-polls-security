@@ -1,6 +1,6 @@
 """Defines the Question and Choice models for the KU Polls application."""
 import datetime
-
+import uuid
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 class Question(models.Model):
     """Model representing a poll question."""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published', default=timezone.now)
     end_date = models.DateTimeField('date ended', null=True)
@@ -59,6 +60,7 @@ class Question(models.Model):
 class Choice(models.Model):
     """Model representing a choice for a specific poll question."""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
     # votes = models.IntegerField(default=0)
@@ -81,6 +83,7 @@ class Choice(models.Model):
 class Vote(models.Model):
     """Model representing a vote cast by a user for a specific choice."""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     choice_question = models.ForeignKey(Question, on_delete=models.CASCADE)

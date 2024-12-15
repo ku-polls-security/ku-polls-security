@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 
 from .models import Question, Choice, Vote
 
-
 class QuestionModelTests(TestCase):
     """Test The Model."""
 
@@ -207,9 +206,13 @@ class VoteViewTests(TestCase):
         past_question.save()
         url = reverse('polls:vote', args=(past_question.id,))
         self.client.login(username='testuser', password='12345')
-        response = self.client.post(url, {'choice': self.choice.id})
+
+        with self.assertLogs('polls', level='WARNING') as log:
+            response = self.client.post(url, {'choice': self.choice.id})
+
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "This poll is not allowed for voting.")
+        self.assertTrue(any(f"User testuser tried to vote on a closed poll {past_question.id}" in message for message in log.output))
 
     def test_user_cannot_vote_multiple_times(self):
         """A user should not be able to vote multiple times for the same question."""
@@ -219,3 +222,19 @@ class VoteViewTests(TestCase):
         response = self.client.post(url, {'choice': self.choice.id})
         self.assertEqual(response.status_code, 302)  # Should redirect
         self.assertEqual(Vote.objects.count(), 1)  # User should only have one vote for this question
+
+    def test_vote_missing_choice(self):
+        """Test that a missing choice triggers an error and logs it."""
+
+        self.client.login(username='testuser', password='12345')
+        url = reverse('polls:vote', args=(self.question.id,))
+
+        # Capture the logs during the request
+        with self.assertLogs('polls', level='WARNING') as log:
+            response = self.client.post(url, {})  # Empty POST data (no choice selected)
+
+        # Assert that the correct error message was shown
+        self.assertEqual(response.status_code, 200)
+
+        # Assert that the log contains the expected warning message
+        self.assertTrue(any("Choice ID not found in POST data" in message for message in log.output))
