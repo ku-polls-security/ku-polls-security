@@ -1,20 +1,38 @@
 [
 {
   "model": "polls.vote",
-  "pk": 1,
+  "pk": "04ca5a54-7ede-4b62-96e7-a9a34e223114",
   "fields": {
-    "user": 3,
-    "choice": 17,
-    "choice_question": 3
+    "user": 4,
+    "choice": "97667eee-8093-426a-898d-e8dbeea9eb8c",
+    "choice_question": "825a2d03-78c4-4024-a257-3b22f3779d50"
   }
 },
 {
   "model": "polls.vote",
-  "pk": 2,
+  "pk": "56dce03d-ccc1-438b-97d9-9bfd6ba16a17",
   "fields": {
-    "user": 3,
-    "choice": 8,
-    "choice_question": 2
+    "user": 4,
+    "choice": "e38538e9-8098-48fa-9e3b-0fe8d98722ce",
+    "choice_question": "325e1507-0181-4552-abc6-130e6aaf4e5c"
+  }
+},
+{
+  "model": "polls.vote",
+  "pk": "90e19f81-2b41-48f3-9c8e-eda624a22fc4",
+  "fields": {
+    "user": 4,
+    "choice": "1459d920-e234-4ce7-b7a9-ec87451887bf",
+    "choice_question": "6fb015a7-5f4c-4d60-9e91-e27695f613c6"
+  }
+},
+{
+  "model": "polls.vote",
+  "pk": "abb85b2e-12bb-48f2-be4d-dbe905973ba9",
+  "fields": {
+    "user": 4,
+    "choice": "16ac5364-e78d-4a95-9d8f-9f3650acdd40",
+    "choice_question": "d933090f-2ccb-48fd-b795-80f506766f9a"
   }
 }
 ]

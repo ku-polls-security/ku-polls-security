@@ -1,142 +1,206 @@
 [
 {
   "model": "polls.question",
-  "pk": 2,
-  "fields": {
-    "question_text": "Which programming language do you prefer for backend development?",
-    "pub_date": "2024-08-24T21:26:47.462Z",
-    "end_date": null
-  }
-},
-{
-  "model": "polls.question",
-  "pk": 3,
+  "pk": "325e1507-0181-4552-abc6-130e6aaf4e5c",
   "fields": {
     "question_text": "What is the most important factor when choosing a software development framework?",
-    "pub_date": "2024-08-24T21:29:03.904Z",
+    "pub_date": "2024-12-15T17:15:32.507Z",
     "end_date": null
   }
 },
 {
   "model": "polls.question",
-  "pk": 4,
+  "pk": "6fb015a7-5f4c-4d60-9e91-e27695f613c6",
   "fields": {
     "question_text": "Which operating system do you primarily use for development?",
-    "pub_date": "2024-09-01T06:30:13.991Z",
-    "end_date": "2024-09-01T06:32:13.991Z"
+    "pub_date": "2024-12-15T17:31:04.294Z",
+    "end_date": "2024-12-22T17:31:04.294Z"
   }
 },
 {
   "model": "polls.question",
-  "pk": 5,
+  "pk": "825a2d03-78c4-4024-a257-3b22f3779d50",
+  "fields": {
+    "question_text": "Which programming language do you prefer for backend development?",
+    "pub_date": "2024-12-15T17:20:12.748Z",
+    "end_date": null
+  }
+},
+{
+  "model": "polls.question",
+  "pk": "d933090f-2ccb-48fd-b795-80f506766f9a",
   "fields": {
     "question_text": "What is your preferred code editor?",
-    "pub_date": "2024-11-30T06:34:18.157Z",
-    "end_date": "2024-12-30T06:34:18.157Z"
+    "pub_date": "2024-12-15T17:38:54.124Z",
+    "end_date": "2025-01-14T17:38:54.124Z"
   }
 },
 {
   "model": "polls.choice",
-  "pk": 7,
+  "pk": "0838f103-b9b6-4d08-85dc-825c5574f754",
   "fields": {
-    "question": 2,
-    "choice_text": "Python"
-  }
-},
-{
-  "model": "polls.choice",
-  "pk": 8,
-  "fields": {
-    "question": 2,
-    "choice_text": "Java"
-  }
-},
-{
-  "model": "polls.choice",
-  "pk": 9,
-  "fields": {
-    "question": 2,
-    "choice_text": "Ruby"
-  }
-},
-{
-  "model": "polls.choice",
-  "pk": 10,
-  "fields": {
-    "question": 2,
+    "question": "825a2d03-78c4-4024-a257-3b22f3779d50",
     "choice_text": "Go"
   }
 },
 {
   "model": "polls.choice",
-  "pk": 11,
+  "pk": "0de13079-08b1-4f60-b6bc-32dca712b75e",
   "fields": {
-    "question": 2,
-    "choice_text": "PHP"
+    "question": "d933090f-2ccb-48fd-b795-80f506766f9a",
+    "choice_text": "Vim"
   }
 },
 {
   "model": "polls.choice",
-  "pk": 12,
+  "pk": "1459d920-e234-4ce7-b7a9-ec87451887bf",
   "fields": {
-    "question": 2,
-    "choice_text": "C#"
+    "question": "6fb015a7-5f4c-4d60-9e91-e27695f613c6",
+    "choice_text": "Linux"
   }
 },
 {
   "model": "polls.choice",
-  "pk": 13,
+  "pk": "16ac5364-e78d-4a95-9d8f-9f3650acdd40",
   "fields": {
-    "question": 3,
-    "choice_text": "Performance"
+    "question": "d933090f-2ccb-48fd-b795-80f506766f9a",
+    "choice_text": "Sublime Text"
   }
 },
 {
   "model": "polls.choice",
-  "pk": 14,
+  "pk": "16e0cb57-20dc-45a1-aa78-7aa73e8f7279",
   "fields": {
-    "question": 3,
-    "choice_text": "Ease of use"
+    "question": "6fb015a7-5f4c-4d60-9e91-e27695f613c6",
+    "choice_text": "Windows"
   }
 },
 {
   "model": "polls.choice",
-  "pk": 15,
+  "pk": "204697d0-e6af-49d8-a9b3-6f85a909dd16",
   "fields": {
-    "question": 3,
-    "choice_text": "Community support"
-  }
-},
-{
-  "model": "polls.choice",
-  "pk": 16,
-  "fields": {
-    "question": 3,
+    "question": "325e1507-0181-4552-abc6-130e6aaf4e5c",
     "choice_text": "Flexibility"
   }
 },
 {
   "model": "polls.choice",
-  "pk": 17,
+  "pk": "40a88c5f-e048-4f9f-a2fb-deb6676ce96d",
   "fields": {
-    "question": 3,
+    "question": "825a2d03-78c4-4024-a257-3b22f3779d50",
+    "choice_text": "Java"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "4f90e909-abee-442d-b102-47db58cf1016",
+  "fields": {
+    "question": "d933090f-2ccb-48fd-b795-80f506766f9a",
+    "choice_text": "Atom"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "5965650c-771a-4f35-881b-6f8e0660a91f",
+  "fields": {
+    "question": "325e1507-0181-4552-abc6-130e6aaf4e5c",
+    "choice_text": "Community support"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "6567bd1c-9190-4ac8-9248-581c95f64e80",
+  "fields": {
+    "question": "6fb015a7-5f4c-4d60-9e91-e27695f613c6",
+    "choice_text": "macOS"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "6af38e74-7211-42b8-8355-b769d49cf40c",
+  "fields": {
+    "question": "825a2d03-78c4-4024-a257-3b22f3779d50",
+    "choice_text": "C#"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "7ead6ed5-159e-4a78-b39c-800c6b67e28f",
+  "fields": {
+    "question": "d933090f-2ccb-48fd-b795-80f506766f9a",
+    "choice_text": "IntelliJ IDEA"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "899e3259-ca12-4299-9c68-4a7817c84947",
+  "fields": {
+    "question": "325e1507-0181-4552-abc6-130e6aaf4e5c",
+    "choice_text": "Performance"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "97667eee-8093-426a-898d-e8dbeea9eb8c",
+  "fields": {
+    "question": "825a2d03-78c4-4024-a257-3b22f3779d50",
+    "choice_text": "Ruby"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "b5f0f902-50c3-475f-8296-d64450b16936",
+  "fields": {
+    "question": "825a2d03-78c4-4024-a257-3b22f3779d50",
+    "choice_text": "Python"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "c14a3e00-d8e6-4e69-b068-b82c97570a6c",
+  "fields": {
+    "question": "325e1507-0181-4552-abc6-130e6aaf4e5c",
+    "choice_text": "Ease of use"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "c481b0db-ce6d-4922-a6e0-47d2430b3e2c",
+  "fields": {
+    "question": "825a2d03-78c4-4024-a257-3b22f3779d50",
+    "choice_text": "PHP"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "cdcdae71-d090-4f99-88d8-300bb0dac7b8",
+  "fields": {
+    "question": "d933090f-2ccb-48fd-b795-80f506766f9a",
+    "choice_text": "VSCode"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "e38538e9-8098-48fa-9e3b-0fe8d98722ce",
+  "fields": {
+    "question": "325e1507-0181-4552-abc6-130e6aaf4e5c",
+    "choice_text": "Other"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "e83016ee-c972-44fc-a2e9-7e7859b13886",
+  "fields": {
+    "question": "d933090f-2ccb-48fd-b795-80f506766f9a",
+    "choice_text": "Other"
+  }
+},
+{
+  "model": "polls.choice",
+  "pk": "f3df6348-07f8-4da3-87f2-5a9a3a079ecd",
+  "fields": {
+    "question": "325e1507-0181-4552-abc6-130e6aaf4e5c",
     "choice_text": "Security"
-  }
-},
-{
-  "model": "polls.choice",
-  "pk": 18,
-  "fields": {
-    "question": 3,
-    "choice_text": "Other"
-  }
-},
-{
-  "model": "polls.choice",
-  "pk": 19,
-  "fields": {
-    "question": 2,
-    "choice_text": "Other"
   }
 }
 ]
