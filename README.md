@@ -19,7 +19,7 @@ Installation : follow the step in [Certificate Creation](https://github.com/ku-p
 
 ## Running the Application
 
-Running : run by typing this code in your terminal, cmd or powershell.
+Running : run by typing this code in your terminal, cmd or powershell. (must use python with version <= 3.11.9)
 
 ```
 python manage.py runsslserver --certificate certs/127.0.0.1+1.pem --key certs/127.0.0.1+1-key.pem
