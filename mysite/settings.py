@@ -93,7 +93,7 @@ SECURE_HSTS_SECONDS = 31536000  # Enforce HSTS for 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-SECURE_SSL_REDIRECT = True  # Redirect HTTP to HTTPS
+SECURE_SSL_REDIRECT = False  # Redirect HTTP to HTTPS
 SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME sniffing
 SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filter
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'  # Restrict referrer information
@@ -190,7 +190,7 @@ AXES_COOLOFF_TIME = 1  # Lockout time in hours
 AXES_ONLY_USER_FAILURES = True
 
 if 'test' in sys.argv:
-    AXES_ENABLED = False
+    AXES_ENABLED = True
 
 PASSWORD_HISTORY_COUNT = 5  # Prevent reuse of last 5 passwords
 
