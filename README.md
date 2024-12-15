@@ -1,4 +1,4 @@
-[![Unit Tests](https://github.com/TAGCH/ku-polls/actions/workflows/ku-polls-unittest.yml/badge.svg)](https://github.com/TAGCH/ku-polls/actions/workflows/ku-polls-unittest.yml) [![Flake8](https://github.com/TAGCH/ci-demo/actions/workflows/python-flake8.yml/badge.svg)](https://github.com/TAGCH/ci-demo/actions/workflows/python-flake8.yml)
+[![Unit Tests](https://github.com/ku-polls-security/ku-polls-security/actions/workflows/ku-polls-unittest.yml/badge.svg)](https://github.com/ku-polls-security/ku-polls-security/actions/workflows/ku-polls-unittest.yml) [![Python Flake8](https://github.com/ku-polls-security/ku-polls-security/actions/workflows/python-flake8.yml/badge.svg)](https://github.com/ku-polls-security/ku-polls-security/actions/workflows/python-flake8.yml) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/06dda6efddaa4d5092be9d8d12315dcf)](https://app.codacy.com?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 ## KU Polls: Online Survey Questions 
 
 An application to conduct online polls and surveys based
@@ -6,7 +6,8 @@ on the [Django Tutorial project](https://docs.djangoproject.com/en/4.1/intro/), 
 additional features.
 
 This app was created as part of the [Individual Software Process](
-https://cpske.github.io/ISP) course at [Kasetsart University](https://www.ku.ac.th).
+https://cpske.github.io/ISP) course and was improved security-wise  
+in Software Dev Security course at [Kasetsart University](https://www.ku.ac.th).
 
 ## Installation
 
@@ -40,13 +41,4 @@ python manage.py runsslserver --certificate certs/127.0.0.1+1.pem --key certs/12
 
 ## Project Documents
 
-All project documents are in the [Project Wiki](../../wiki/Home).
-
-- [Vision and Scope](../../wiki/Vision%20and%20Scope)
-- [Requirements](../../wiki/Requirements)
-- [Project Plan](../../wiki/Project%20Plan)
-- [Iteration 1 Plan](../../wiki/Iteration%201%20Plan) and [Task Board](https://github.com/users/TAGCH/projects/6/views/2)
-- [Iteration 2 Plan](../../wiki/Iteration%202%20Plan) and [Task Board](https://github.com/users/TAGCH/projects/6/views/3)
-- [Iteration 3 Plan](../../wiki/Iteration%203%20Plan) and [Task Board](https://github.com/users/TAGCH/projects/6/views/4)
-- [Iteration 4 Plan](../../wiki/Iteration%204%20Plan) and [Task Board](https://github.com/users/TAGCH/projects/6/views/5)
-- [Domain Model](../../wiki/Domain%20Model)
+All project documents are in the [Document](https://docs.google.com/document/d/1SWUXoPe1WL65g2507pWLMynqG_rc3yysUECLFEhiKvA/edit?usp=sharing).
