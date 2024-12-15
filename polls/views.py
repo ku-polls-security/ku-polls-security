@@ -13,6 +13,10 @@ import logging
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.contrib.auth.signals import user_login_failed
 from django.dispatch import receiver
+from .forms import UsernameChangeForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from .forms import CustomSignupForm
 
 from .models import Choice, Question, Vote
 
@@ -189,24 +193,39 @@ def vote(request, question_id):
 def signup(request):
     """Register a new user."""
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomSignupForm(request.POST)
         if form.is_valid():
-            form.save()
-            # get named fields from the form data
-            username = form.cleaned_data.get('username')
-            # password input field is named 'password1'
-            raw_passwd = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_passwd)
-            login(request, user)
+            # Save the user instance
+            user = form.save()
+
+            # Authenticate the user explicitly to determine the backend
+            user = authenticate(
+                request,
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1']
+            )
+
+            if user:
+                login(request, user)  # Log in the user
+                messages.success(
+                    request,
+                    f"Account created successfully! Welcome, {user.username}!"
+                )
+                return redirect('polls:index')
+
+            # Handle edge cases (e.g., backend misconfiguration)
+            messages.error(
+                request,
+                "Authentication failed. Please try logging in."
+            )
         else:
-            messages.error(request, "Signup form invalid, please correct the data and try again.")
-            return render(request, 'registration/signup.html', {'form': form})
-        return redirect('polls:index')
-        # what if form is not valid?
-        # we should display a message in signup.html
+            messages.error(
+                request,
+                "There was an error with your submission. Please try again."
+            )
     else:
-        # create a user form and display it the signup page
-        form = UserCreationForm()
+        form = CustomSignupForm()
+
     return render(request, 'registration/signup.html', {'form': form})
 
 
@@ -283,3 +302,39 @@ def get_client_ip(request):
         ip = '0.0.0.0'  # Fallback IP
         logger.warning("Unable to determine client IP address")
     return ip
+
+
+@login_required
+def change_username(request):
+    if request.method == 'POST':
+        form = UsernameChangeForm(request.POST, user=request.user)  # Pass user to the form
+        if form.is_valid():
+            new_username = form.cleaned_data['new_username']
+            user = request.user
+            user.username = new_username
+            user.save()
+            messages.success(request, "Your username has been successfully updated.")
+            return redirect('polls:index')  # Or wherever you want to redirect
+    else:
+        form = UsernameChangeForm()
+
+    return render(request, 'registration/change_username.html', {'form': form})
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            messages.success(request, "Your password was successfully updated.")
+            return redirect('polls:index')  # Or wherever you want to redirect
+    else:
+        form = PasswordChangeForm(user=request.user)
+    return render(request, 'registration/change_password.html', {'form': form})
+
+
+@login_required
+def user_manage(request):
+    return render(request, 'registration/user_manage.html')

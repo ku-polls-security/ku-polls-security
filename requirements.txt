@@ -1,4 +1,9 @@
 # Packages required by this application
 Django >= 5.1, <5.2
 python-decouple
+django-password-validation
+django-password-validators==1.5.0
+django-axes==5.36.0
+django-password-history
+django-simple-captcha
 django-sslserver

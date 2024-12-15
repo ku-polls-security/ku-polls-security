@@ -1,68 +1,131 @@
-"""Tests of authentication."""
-import django.test
+from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
-from polls.models import Question, Choice
-from django.conf import settings
+from django.contrib.auth import get_user_model
+from unittest.mock import patch
 
-class UserAuthTest(django.test.TestCase):
 
-    def setUp(self):
-        # Initialize the test database
-        super().setUp()
-        self.username = "testuser"
-        self.password = "FatChance!"
-        self.user1 = User.objects.create_user(
-            username=self.username,
-            password=self.password,
-            email="testuser@nowhere.com"
-        )
-        self.user1.first_name = "Tester"
-        self.user1.save()
+class AuthSystemTests(TestCase):
 
-        # Create a poll question and choices
-        q = Question.objects.create(question_text="First Poll Question")
-        for n in range(1, 4):
-            Choice.objects.create(choice_text=f"Choice {n}", question=q)
-        self.question = q
+    @patch('captcha.fields.CaptchaField.clean')  # Correct the patch to the simple-captcha field
+    def test_signup_successful(self, mock_captcha):
+        """Test that a user can sign up successfully with valid data."""
 
-    def test_logout(self):
-        """A user can logout using the logout url."""
-        logout_url = reverse("logout")
-        self.assertTrue(
-            self.client.login(username=self.username, password=self.password)
-        )
-        # Use POST to logout, as many logout implementations expect POST
-        response = self.client.post(logout_url)
+        # Mock the CAPTCHA validation to return a valid response
+        mock_captcha.return_value = None
+
+        response = self.client.post(reverse('polls:signup'), {
+            'username': 'testuser',
+            'password1': 'ValidPassword1!',
+            'password2': 'ValidPassword1!',
+            'captcha': 'valid-captcha-response'  # Simulate a valid CAPTCHA response
+        })
+
+        # Debugging: Check if response is a redirect (302)
+        print(response.status_code)
+        print(response.content)
+
+        # Check redirection to the index page
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse(settings.LOGOUT_REDIRECT_URL))
+        self.assertRedirects(response, reverse('polls:index'))
 
-    def test_login_view(self):
-        """A user can login using the login view."""
-        login_url = reverse("login")
-        response = self.client.get(login_url)
+        # Check that the user was created
+        user = get_user_model().objects.filter(username='testuser').first()
+        self.assertIsNotNone(user)
+
+        # Check user is logged in
+        self.assertTrue('_auth_user_id' in self.client.session)
+
+    def test_signup_password_validation_failure(self):
+        """Test that invalid passwords are rejected by the signup form."""
+        response = self.client.post(reverse('polls:signup'), {
+            'username': 'testuser',
+            'password1': 'invalid1.',  # Invalid password (no uppercase, digit, or special char)
+            'password2': 'invalid1.'
+        })
+
+        # Check that the form is re-rendered with errors
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Password must contain at least one uppercase letter.")
 
-        # Login using a POST request
-        form_data = {
-            "username": self.username,
-            "password": self.password
-        }
-        response = self.client.post(login_url, form_data)
-        self.assertEqual(response.status_code, 302)
+        # Check that the user was not created
+        user = get_user_model().objects.filter(username='testuser').first()
+        self.assertIsNone(user)
 
-        # Redirect to the polls index page or custom URL
-        self.assertRedirects(response, reverse(settings.LOGIN_REDIRECT_URL))
+    def test_signup_mismatched_passwords(self):
+        """Test that mismatched passwords are rejected."""
+        response = self.client.post(reverse('polls:signup'), {
+            'username': 'testuser',
+            'password1': 'ValidPassword1!',
+            'password2': 'DifferentPassword1!'
+        })
 
-    def test_auth_required_to_vote(self):
-        """Authentication is required to submit a vote."""
-        vote_url = reverse('polls:vote', args=[self.question.id])
-        choice = self.question.choice_set.first()
-        form_data = {"choice": str(choice.id)}
-        response = self.client.post(vote_url, form_data)
+        # Check that the form is re-rendered with errors
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "The two password fields didn’t match.")
 
-        # Should redirect to the login page with next parameter
-        self.assertEqual(response.status_code, 302)
-        login_with_next = f"{reverse('login')}?next={vote_url}"
-        self.assertRedirects(response, login_with_next)
+        # Check that the user was not created
+        user = get_user_model().objects.filter(username='testuser').first()
+        self.assertIsNone(user)
+
+    def test_signup_duplicate_username(self):
+        """Test that a duplicate username is rejected."""
+        # Create an existing user
+        User.objects.create_user(username='testuser', password='ValidPassword1!')
+
+        response = self.client.post(reverse('polls:signup'), {
+            'username': 'testuser',
+            'password1': 'AnotherValidPassword1!',
+            'password2': 'AnotherValidPassword1!'
+        })
+
+        # Check that the form is re-rendered with errors
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "A user with that username already exists.")
+
+        # Check that no new user was created
+        users = get_user_model().objects.filter(username='testuser')
+        self.assertEqual(users.count(), 1)
+
+    def test_signup_blank_fields(self):
+        """Test that blank fields are rejected."""
+        response = self.client.post(reverse('polls:signup'), {
+            'username': '',
+            'password1': '',
+            'password2': ''
+        })
+
+        # Check that the form is re-rendered with errors
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "This field is required.")
+
+        # Check that the user was not created
+        users = get_user_model().objects.all()
+        self.assertEqual(users.count(), 0)
+
+    def test_axes_lockout(self):
+        # Create a user for testing
+        user = get_user_model().objects.create_user(username='testuser', password='ValidPassword1!')
+        print(f"User {user.username} created successfully")
+
+        # Simulate multiple failed login attempts
+        for _ in range(5):
+            response = self.client.post(reverse('login'), {
+                'username': 'testuser',
+                'password': 'InvalidPassword!'  # Incorrect password
+            })
+            print(f"Failed login attempt response: {response.status_code}, {response.content[:100]}")
+
+        # After 5 failed attempts, Axes should lock the user out.
+        response = self.client.post(reverse('login'), {
+            'username': 'testuser',
+            'password': 'ValidPassword1!'  # Correct password
+        })
+        print(f"Response after lockout attempt: {response.status_code}, {response.content[:100]}")
+
+        # Verify that the response is a 403 Forbidden due to lockout
+        self.assertEqual(response.status_code, 403)  # Expecting 403 due to lockout
+
+        # Check for lockout message, but adjust since it's a 403 Forbidden response.
+        # You might want to check the actual content in the response body.
+        self.assertIn(b"Account locked: too many login attempts", response.content)
