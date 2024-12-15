@@ -63,7 +63,7 @@
 <body>
     <div class="container">
         <h2>Create an Account</h2>
-        <form method="POST" action="{% url 'signup' %}">
+        <form method="POST" action="{% url 'polls:signup' %}">
             {% csrf_token %}
             {% for field in form %}
                 <div class="form-group">
@@ -176,7 +176,7 @@
             registerButton.disabled = true;
 
             // Prevent form submission if consent isn't given
-            document.querySelector('form[action="{% url "signup" %}"]').addEventListener('submit', function (event) {
+            document.querySelector('form[action="{% url "polls:signup" %}"]').addEventListener('submit', function (event) {
                 if (!consentGiven) {
                     event.preventDefault();
                     alert("You must agree to our policy to register.");

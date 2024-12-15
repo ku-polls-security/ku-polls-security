@@ -30,7 +30,7 @@
                 </h4>
                 {% else %}
                     <button class="btnLogin-popup" onclick="window.location.href='{% url 'login' %}?next={{request.path}}'; ">Login</button>
-                    <button class="btnLogin-popup" onclick="window.location.href='{% url 'signup' %}?next={{request.path}}'; ">Sign up</button>
+                    <button class="btnLogin-popup" onclick="window.location.href='{% url 'polls:signup' %}?next={{request.path}}'; ">Sign up</button>
                 {% endif %}
             </nav>
             

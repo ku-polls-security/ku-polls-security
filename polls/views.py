@@ -16,7 +16,6 @@ from django.dispatch import receiver
 
 from .models import Choice, Question, Vote
 
-
 class IndexView(generic.ListView):
     """Determine the view of the index page."""
 
@@ -197,9 +196,9 @@ def consent_submission(request):
 def signup(request):
     """Register a new user."""
 
-    if not request.session.get('consent_given', False):
-        messages.error(request, "You must agree to our policy to register.")
-        return redirect('signup')
+    # if not request.session.get('consent_given', False):
+    #     messages.error(request, "You must agree to our policy to register.")
+    #     return redirect('polls:signup')
     
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
