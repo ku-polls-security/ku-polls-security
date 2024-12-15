@@ -16,6 +16,7 @@ from django.dispatch import receiver
 from .forms import UsernameChangeForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from .forms import CustomSignupForm
 
 from .models import Choice, Question, Vote
 
@@ -190,7 +191,7 @@ def vote(request, question_id):
 def signup(request):
     """Register a new user."""
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomSignupForm(request.POST)
         if form.is_valid():
             # Save the user instance
             user = form.save()
@@ -221,7 +222,7 @@ def signup(request):
                 "There was an error with your submission. Please try again."
             )
     else:
-        form = UserCreationForm()
+        form = CustomSignupForm()
 
     return render(request, 'registration/signup.html', {'form': form})
 

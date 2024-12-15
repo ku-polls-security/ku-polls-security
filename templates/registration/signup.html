@@ -204,44 +204,54 @@
         <form method="POST">
             {% csrf_token %}
             {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {% if field.name in "password1 password2" %}
-                        <div class="password-field">
-                            {{ field }}
-                            <i 
-                                id="toggler-{{ field.name }}" 
-                                class="far fa-eye eye-icon" 
-                                onclick="togglePasswordVisibility('{{ field.id_for_label }}', 'toggler-{{ field.name }}')">
-                            </i>
-                        </div>
-                        {% if field.name == "password1" %}
-                            <div id="password-error" class="error-message"></div>
-                            <div id="password-success" class="success-message"></div>
-
-                            <!-- Password strength tube -->
-                            <div class="password-strength-tube">
-                                <div id="password-strength-bar" class="password-strength-level"></div>
+                {% if field.name != "captcha" %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {% if field.name in "password1 password2" %}
+                            <div class="password-field">
+                                {{ field }}
+                                <i 
+                                    id="toggler-{{ field.name }}" 
+                                    class="far fa-eye eye-icon" 
+                                    onclick="togglePasswordVisibility('{{ field.id_for_label }}', 'toggler-{{ field.name }}')">
+                                </i>
                             </div>
-                            <div id="password-strength-text" class="password-strength-text">Weak</div>
+                            {% if field.name == "password1" %}
+                                <div id="password-error" class="error-message"></div>
+                                <div id="password-success" class="success-message"></div>
+
+                                <!-- Password strength tube -->
+                                <div class="password-strength-tube">
+                                    <div id="password-strength-bar" class="password-strength-level"></div>
+                                </div>
+                                <div id="password-strength-text" class="password-strength-text">Weak</div>
+                            {% endif %}
+                        {% else %}
+                            {{ field }}
                         {% endif %}
-                    {% else %}
-                        {{ field }}
-                    {% endif %}
-                    {% for error in field.errors %}
-                        <div class="error-message">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                {% if field.name == "password2" %}
-                    <div class="password-guidelines">
-                        - Password must include at least 12 characters.<br>
-                        - An uppercase letter.<br>
-                        - A lowercase letter.<br>
-                        - A digit.<br>
-                        - A special character.
+                        {% for error in field.errors %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endfor %}
                     </div>
+                    {% if field.name == "password2" %}
+                        <div class="password-guidelines">
+                            - Password must include at least 12 characters.<br>
+                            - An uppercase letter.<br>
+                            - A lowercase letter.<br>
+                            - A digit.<br>
+                            - A special character.
+                        </div>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
+            <!-- Render CAPTCHA field after password2 -->
+            <div class="form-group">
+                <label for="{{ form.captcha.id_for_label }}">{{ form.captcha.label }}</label>
+                {{ form.captcha }}
+                {% for error in form.captcha.errors %}
+                    <div class="error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
             <br>
             <button type="submit" onclick="return validatePassword()">Register</button>
         </form>
