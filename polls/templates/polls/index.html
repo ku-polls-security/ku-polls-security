@@ -21,7 +21,7 @@
 
             <nav class="navigation">
                 {% if user.is_authenticated %}
-                <h4>Welcome back, {{ user.username }}
+                <h4>Welcome back, <a href="{% url 'polls:user_manage' %}">{{ user.username }}</a>
                     <!-- Logout Form -->
                     <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: inline;">
                         {% csrf_token %}
@@ -41,7 +41,9 @@
                 <span class="close-button">&times;</span>
                 <ul>
                     {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% if 'success' in message.tags %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
             </div>

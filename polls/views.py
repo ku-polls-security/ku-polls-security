@@ -1,6 +1,11 @@
 """Handles poll display, voting, and admin functions in the KU Polls app."""
 from typing import Any
-from django.http import HttpRequest, HttpResponseRedirect, Http404
+from django.http import (
+    HttpRequest,
+    HttpResponseRedirect,
+    Http404,
+    JsonResponse,
+)
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
@@ -13,6 +18,10 @@ import logging
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.contrib.auth.signals import user_login_failed
 from django.dispatch import receiver
+from .forms import UsernameChangeForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from .forms import CustomSignupForm
 
 from .models import Choice, Question, Vote
 
@@ -143,7 +152,8 @@ def vote(request, question_id):
 
     if not question.can_vote():
         logger.warning(
-            f"User {user.username} tried to vote on a closed poll {question_id}"
+            f"User {user.username} tried to vote on a closed poll "
+            f"{question_id}"
         )
         messages.error(request, "This poll is not allowed for voting.")
         return render(request, 'polls/detail.html', {'question': question})
@@ -151,11 +161,16 @@ def vote(request, question_id):
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except KeyError:
-        logger.warning(f"Choice ID not found in POST data for user {user.username}")
+        logger.warning(
+            f"Choice ID not found in POST data for user {user.username}"
+            )
         messages.error(request, "You didn't select a valid choice.")
         return render(request, 'polls/detail.html', {'question': question})
     except Choice.DoesNotExist:
-        logger.warning(f"Invalid choice ID for question {question_id} by user {user.username}")
+        logger.warning(
+            f"Invalid choice ID for question {question_id} "
+            f"by user {user.username}"
+        )
         messages.error(request, "Invalid choice selection.")
         return render(request, 'polls/detail.html', {'question': question})
 
@@ -186,28 +201,83 @@ def vote(request, question_id):
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 
+def consent_submission(request):
+    """Return JsonResponse of consent."""
+    if request.method == 'POST':
+        consent = request.POST.get('consent1')
+        if consent == 'yes':
+            request.session['consent_given'] = True
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse(
+                {'success': False, 'message': 'You must consent to proceed.'}
+                )
+    return JsonResponse({'success': False, 'message': 'Invalid request.'})
+
+
 def signup(request):
     """Register a new user."""
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomSignupForm(request.POST)
         if form.is_valid():
-            form.save()
-            # get named fields from the form data
-            username = form.cleaned_data.get('username')
-            # password input field is named 'password1'
-            raw_passwd = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_passwd)
-            login(request, user)
+            # Save the user instance
+            user = form.save()
+
+            # Authenticate the user explicitly to determine the backend
+            user = authenticate(
+                request,
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1']
+            )
+
+            if user:
+                login(request, user)  # Log in the user
+                messages.success(
+                    request,
+                    f"Account created successfully! Welcome, {user.username}!"
+                )
+                logger.info(f"User {user.username} login.")
+                return redirect('polls:index')
+
+            # Handle edge cases (e.g., backend misconfiguration)
+            messages.error(
+                request,
+                "Authentication failed. Please try logging in."
+            )
+            logger.warning("User authentication failed.")
         else:
-            messages.error(request, "Signup form invalid, please correct the data and try again.")
-            return render(request, 'registration/signup.html', {'form': form})
-        return redirect('polls:index')
-        # what if form is not valid?
-        # we should display a message in signup.html
+            messages.error(
+                request,
+                "There was an error with your submission. Please try again."
+            )
+            logger.error("Error with submission.")
+    else:
+        form = CustomSignupForm()
+        logger.warning("Invalid form submission.")
+    return render(request, 'registration/signup.html', {'form': form})
+
+
+def policy(request):
+    """Render policy page."""
+    if request.method == 'POST':
+        choice = request.POST.get('consent1', None)
+
+        if choice == 'yes':
+            # Set a session variable to track consent
+            request.session['consent_given'] = True
+            return redirect('signup')
+
+        else:
+            messages.info(request, "You must agree to our policy to signup!")
+            logger.warning(
+                "User did not agree to the policy and "
+                "attempted to proceed with signup."
+            )
+            return redirect('signup')
     else:
         # create a user form and display it the signup page
         form = UserCreationForm()
-    return render(request, 'registration/signup.html', {'form': form})
+    return render(request, 'registration/policy.html', {'form': form})
 
 
 @receiver(user_logged_in)
@@ -255,11 +325,6 @@ def log_user_login_failed(sender, credentials, request, **kwargs):
     username = credentials.get('username', 'unknown')
     logger.warning(f"Failed login attempt for {username} from {ip_addr}")
 
-def custom_404(request, exception):
-    return render(request, 'polls/404.html', status=404)
-
-def custom_500(request):
-    return render(request, 'polls/500.html', status=500)
 
 def get_client_ip(request):
     """
@@ -283,3 +348,69 @@ def get_client_ip(request):
         ip = '0.0.0.0'  # Fallback IP
         logger.warning("Unable to determine client IP address")
     return ip
+
+
+@login_required
+def change_username(request):
+    """Return render change_username.html."""
+    if request.method == 'POST':
+        form = UsernameChangeForm(request.POST, user=request.user)
+        if form.is_valid():
+            new_username = form.cleaned_data['new_username']
+            user = request.user
+            user.username = new_username
+            user.save()
+            messages.success(
+                request, "Your username has been successfully updated."
+            )
+            logger.info(
+                "User %s successfully updated their username.",
+                user.username
+                )
+            return redirect('polls:index')  # Or wherever you want to redirect
+        else:
+            logger.warning(
+                "Invalid username change attempt by user %s.",
+                request.user.username
+                )
+    else:
+        form = UsernameChangeForm()
+
+    return render(request, 'registration/change_username.html', {'form': form})
+
+
+@login_required
+def change_password(request):
+    """Return render change_password.html."""
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            messages.success(
+                request, "Your password was successfully updated."
+            )
+            logger.info(
+                "User %s successfully updated their password.",
+                request.user.username
+                )
+            return redirect('polls:index')  # Or wherever you want to redirect
+        else:
+            logger.warning(
+                "Invalid password change attempt by user %s.",
+                request.user.username
+                )
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, 'registration/change_password.html', {'form': form})
+
+
+@login_required
+def user_manage(request):
+    """Return render user_manage.html."""
+    logger.info(
+        "User %s accessed the user management page.",
+        request.user.username
+        )
+    return render(request, 'registration/user_manage.html')

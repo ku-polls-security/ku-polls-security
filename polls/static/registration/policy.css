@@ -1,0 +1,42 @@
+.form-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #f9f9f9;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(161deg, rgba(255, 253, 253, 0.00) -4.34%, rgba(212, 191, 119, 0.40) 90.87%), #FFF;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    font-weight: bold;
+}
+.form-group .options {
+    margin-top: 5px;
+}
+.form-group .options label {
+    margin-right: 15px;
+}
+.submit-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.submit-button:hover {
+    background: #0056b3;
+}

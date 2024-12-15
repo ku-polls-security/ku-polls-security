@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic.base import RedirectView
 from django.contrib.auth import views as auth_views
-from django.conf.urls import handler404, handler500
 
 from polls import views
 
@@ -27,9 +26,7 @@ urlpatterns = [
     path('polls/', include('polls.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('signup/', views.signup, name='signup'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('captcha/', include('captcha.urls')),
+    path('consent/', views.consent_submission, name='consent_submission'),
 ]
-
-handler404 = views.custom_404
-handler500 = views.custom_500

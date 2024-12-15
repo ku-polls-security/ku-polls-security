@@ -1,0 +1,93 @@
+/* General Body Style for Login */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(161deg, rgba(255, 253, 253, 0.00) -4.34%, rgba(212, 191, 119, 0.40) 90.87%), #FFF;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Container for the form */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 687px;
+    padding: 20px;
+}
+
+/* Heading for the Login Form */
+h2 {
+    font-size: 2.7em;
+    font-weight: 780;
+    color: #d4bf77;
+    text-shadow: 0 0 8px #00000029;
+    margin-bottom: 30px;
+}
+
+/* Form styles */
+form {
+    background-color: #f8f8f8;
+    padding: 30px;
+    padding-right: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+form p {
+    margin: 10px 0;
+    font-size: 1.1em;
+}
+
+button {
+    background-color: #d4bf77;
+    color: #fff;
+    font-size: 1.2em;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-shadow: 0 0 5px #000000;
+}
+
+button:hover {
+    background-color: #b39b00;
+}
+
+/* Input Fields Styling */
+input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    transition: border 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+    border-color: #d4bf77;
+    outline: none;
+}
+
+/* Error messages */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+/* Add a subtle border around form */
+form {
+    border: 1px solid #d4bf77;
+    border-radius: 10px;
+}
+
+.signup-link {
+    margin-top: 0px;
+}
