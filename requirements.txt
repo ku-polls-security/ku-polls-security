@@ -6,3 +6,4 @@ django-password-validators==1.5.0
 django-axes==5.36.0
 django-mfa2
 django-password-history
+django-sslserver
