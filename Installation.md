@@ -5,7 +5,7 @@
 - Clone this repository to your local computer.
 
 ```
-git clone https://github.com/TAGCH/ku-polls.git DirectoryName
+git clone https://github.com/ku-polls-security/ku-polls-security.git DirectoryName
 ```
 **NOTED**: ```DirectoryName``` is your desired directory name.
 
