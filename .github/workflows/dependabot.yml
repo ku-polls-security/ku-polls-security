@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - package-ecosystem: "pip" # Package manager
+    directory: "/" # Root directory
+    schedule:
+      interval: "weekly" # Frequency of updates
