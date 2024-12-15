@@ -183,6 +183,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 # Axes settings for rate-limiting
 AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = 1  # Lockout time in hours

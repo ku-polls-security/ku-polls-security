@@ -129,3 +129,8 @@ input[type="submit"]:hover {
 .login-link{
     margin-top: 0px;
 }
+
+p { 
+    text-indent: 30px;
+ }
+ 

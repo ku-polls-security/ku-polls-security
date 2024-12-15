@@ -29,7 +29,5 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('captcha/', include('captcha.urls')),
+    path('consent/', views.consent_submission, name='consent_submission'),
 ]
-
-handler404 = views.custom_404
-handler500 = views.custom_500

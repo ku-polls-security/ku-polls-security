@@ -1,6 +1,6 @@
 """Handles poll display, voting, and admin functions in the KU Polls app."""
 from typing import Any
-from django.http import HttpRequest, HttpResponseRedirect, Http404
+from django.http import HttpRequest, HttpResponseRedirect, Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
@@ -19,7 +19,6 @@ from django.contrib.auth import update_session_auth_hash
 from .forms import CustomSignupForm
 
 from .models import Choice, Question, Vote
-
 
 class IndexView(generic.ListView):
     """Determine the view of the index page."""
@@ -189,6 +188,17 @@ def vote(request, question_id):
 
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
+def consent_submission(request):
+    """Handles the submission of the consent form."""
+    if request.method == 'POST':
+        consent = request.POST.get('consent1')
+        if consent == 'yes':
+            request.session['consent_given'] = True
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'message': 'You must consent to proceed.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request.'})
+
 
 def signup(request):
     """Register a new user."""
@@ -227,6 +237,25 @@ def signup(request):
         form = CustomSignupForm()
 
     return render(request, 'registration/signup.html', {'form': form})
+
+
+def policy(request):
+    if request.method == 'POST':
+        # form = UserCreationForm(request.POST)
+        choice = request.POST.get('consent1', None)
+
+        if choice == 'yes':
+            # Set a session variable to track consent
+            request.session['consent_given'] = True
+            return redirect('signup')
+
+        else:
+            messages.info(request, "You must agree to our policy to signup!") #inform user they didn't agreed to policies
+            return redirect('signup')
+    else:
+        # create a user form and display it the signup page
+        form = UserCreationForm()
+    return render(request, 'registration/policy.html', {'form': form})
 
 
 @receiver(user_logged_in)
