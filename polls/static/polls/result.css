@@ -1,0 +1,311 @@
+/*For menu bar*/
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    padding: 16px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(212, 191, 119);
+    box-shadow: 0 0 10px rgb(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 2.2em;
+    color: azure;
+    user-select: none;
+    font-weight: 700;
+    text-shadow: 0px 0px 8px #00000057;
+}
+
+.title {
+    font-size: 2.8em;
+    user-select: none;
+    font-weight: 700;
+    text-shadow: 0px 0px 8px #00000057;
+}
+
+.navigation a {
+    font-size:  1.8em;
+    color: aliceblue;
+    text-decoration: none;
+    font-weight: 580;
+    margin-left: 40px;
+    position:relative;
+    text-shadow: 0px 0px 8px #00000057;
+}
+
+.navigation h4 {
+    position: relative;
+    font-size:  1.0em;
+    color: aliceblue;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 40px;
+    text-shadow: 0px 0px 8px #00000057;
+}
+
+.navigation .btnLogin-popup {
+    width:  95px;
+    height: 45px;
+    background: transparent;
+    border: 1px solid #fff;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #fff;
+    font-weight: 900;
+    margin-left: 40px;
+    box-shadow: 0 0 10px rgb(0, 0, 0, 0.2);
+    transition: .5s;
+    text-shadow: 0px 0px 8px #0000000e;
+}
+
+.navigation .btnLogin-popup:hover {
+    background: rgba(255, 255, 255, 0.5);
+    color: #d4bf77;
+}
+
+.navigation a::after {
+    content: ' ';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    height: 3px;
+    background: #fff;
+    border-radius: 5px;
+    transform: scaleX(0);
+    transition: transform .5s;
+}
+
+.navigation a:hover::after {
+    transform-origin: left;
+    transform: scaleX(1);
+}
+/*For menu bar*/
+
+body {
+    background: linear-gradient(161deg, rgba(255, 253, 253, 0.00) -4.34%, rgba(212, 191, 119, 0.40) 90.87%), #FFF;
+    /* background-repeat: no-repeat;
+    width: 100%;
+    min-height: 100vh;
+    border-bottom-right-radius: 20px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 0px; */
+
+    z-index: 1;
+  }
+
+.popup {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: none; /* Hidden by default */
+    border-radius: 10px;
+}
+
+.popup-content {
+    text-align: center;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Remove default list styling */
+.popup-content ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.popup-content ul li {
+    margin-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 15px; /* Rounded corners for the table */
+    background-color: #ffffff; /* White background for the table */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for modern look */
+    overflow: hidden; /* Ensures rounded corners are respected */
+}
+
+th, td {
+    padding: 12px 20px;
+    text-align: left;
+    font-size: 1.1em; /* Slightly larger font size for readability */
+    color: #555; /* Slightly lighter text color for better contrast */
+}
+
+th {
+    background-color: #d4bf77;
+    color: white; /* White text for the header */
+    font-weight: 700; /* Bold header text */
+    text-transform: uppercase; /* Capitalize header text */
+    letter-spacing: 1px; /* Slightly increase letter-spacing for a clean look */
+}
+
+td {
+    background-color: #f9f9f9; /* Light gray background for rows */
+    border-top: 1px solid #ddd; /* Subtle border between rows */
+}
+
+tr:nth-child(even) td {
+    background-color: #f2f2f2; /* Slightly darker gray for even rows */
+}
+
+tr:hover td {
+    background-color: #ecf5e1;
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff; /* Alternating row colors */
+}
+
+tr:hover {
+    background-color: #f1f7e0;
+}
+
+button.results-button {
+    padding: 10px 15px;
+    background-color: #d4bf77;
+    color: white;
+    border: none;
+    border-radius: 6px; /* Rounded button */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.results-button:hover {
+    background-color: #b39b00;
+}
+
+button.results-button:focus {
+    outline: none;
+}
+
+th, td {
+    padding: 14px;
+    font-size: 1.1em;
+}
+
+th {
+    background-color: #d4bf77; /* Green header */
+    color: white;
+    font-weight: 600;
+}
+
+td {
+    color: #333;
+}
+
+tr:hover {
+    background-color: #f2f2f2; /* Light gray on hover */
+}
+
+tr:nth-child(even) td {
+    background-color: #fafafa; /* Slightly lighter gray */
+}
+
+tr:nth-child(odd) td {
+    background-color: #fff; /* White for odd rows */
+}
+
+.containers {
+    display: flex;
+    flex-direction: column; /* Stack badges vertically */
+    margin: 0 auto;
+    max-width: 960px; /* Maximum width for the entire row */
+    padding: 10px;
+}
+
+.question-badge {
+    width: 100%; /* Full width of the container */
+    margin: 10px 0; /* Space between badges */
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: linear-gradient(145deg, #f3f3f3, #ffffff); /* Gradient background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Align items vertically in the center */
+    transition: all 0.3s ease-in-out; /* Smooth hover transition */
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit text color */
+}
+
+.badge-text {
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    text-align: left; /* Align text to the left */
+    flex-grow: 1; /* Allow text to grow and fill available space */
+}
+
+.results-button {
+    text-decoration: none; /* Remove underline */
+    font-size: 14px;
+    padding: 6px 12px; /* Add padding for the button */
+    color: #ffffff; /* White color for the button text */
+    background-color: #d4bf77; /* Blue background for the button */
+    border-radius: 5px; /* Rounded corners */
+    margin-left: 10px;
+    flex-shrink: 0; /* Prevent shrinking */
+    transition: .5s;
+}
+
+.results-button:hover {
+    background-color: #b39b00; /* Darken the button on hover */
+}
+
+.badge-arrow {
+    font-size: 24px;
+    color: #333;
+    margin-left: 10px; /* Ensure space between button and arrow */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.question-badge.closed {
+    opacity: 0.5; /* Reduce opacity for closed questions */
+}
+
+.question-badge:hover {
+    transform: scale(1.05);
+    background: linear-gradient(145deg, #ffffff, #f3f3f3); /* Reverse the gradient on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+}
+
+.navigation h4 a {
+    font-size: 1.0em;  /* Adjust font size */
+    color: aliceblue;
+    text-decoration: none;
+    font-weight: 580;
+    text-shadow: 0px 0px 8px #00000057;
+    margin-left: 10px;
+}

@@ -22,6 +22,9 @@
             <nav class="navigation">
                 {% if user.is_authenticated %}
                 <h4>Welcome back, <a href="{% url 'polls:user_manage' %}">{{ user.username }}</a>
+                    {% if user.is_staff %}
+                    <button class="btnLogin-popup" onclick="window.location.href='{% url 'admin:index' %}'; ">Admin</button>
+                    {% endif %}
                     <!-- Logout Form -->
                     <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: inline;">
                         {% csrf_token %}
