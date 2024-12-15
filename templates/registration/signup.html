@@ -37,6 +37,15 @@
         .password-field {
             position: relative;
         }
+
+        .btn-primary:disabled {
+            pointer-events: none;
+            opacity: 0.65;
+            background-color: white;
+            color: white;
+            cursor: not-allowed;
+            border: none;
+        }
     </style>
     <script>
         function togglePasswordVisibility(inputId, iconId) {
@@ -95,7 +104,9 @@
                 {% endif %}
             {% endfor %}
             <br>
-            <button type="submit">Register</button>
+            <button type="button" class="btn btn-secondary" id="viewPolicyButton">View Policy</button>
+            </br> </br>
+            <button type="submit" class="btn btn-primary disabled-button" disabled>Register</button>
         </form>
         {% if form.non_field_errors %}
             <div class="errors">
@@ -143,6 +154,8 @@
             // Open the modal on page load
             modal.show();
 
+            registerButton.disabled = true;
+
             // Handle the consent form submission
             consentForm.addEventListener('submit', function (event) {
                 event.preventDefault();
@@ -175,15 +188,20 @@
             // Disable the register button initially
             registerButton.disabled = true;
 
-            // Prevent form submission if consent isn't given
+            // Prevent form submission and show alert if consent isn't given
             document.querySelector('form[action="{% url "polls:signup" %}"]').addEventListener('submit', function (event) {
                 if (!consentGiven) {
                     event.preventDefault();
-                    alert("You must agree to our policy to register.");
+                    alert("You must agree to our policy before registering.");
                 }
             });
+
+            viewPolicyButton.addEventListener('click', function () {
+            modal.show();
+        });
         });
     </script>
+
 
 </body>
 </html>
