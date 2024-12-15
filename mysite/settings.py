@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import config, Csv
 
@@ -41,6 +42,7 @@ LOGGING = {
         'default': {
             'format': '{asctime} {levelname} {module} {message}',
             'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
         },
     },
     'handlers': {
@@ -90,6 +92,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'mysite.middleware.LogErrorMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -122,7 +125,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -163,6 +165,13 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Security related
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SESSION_COOKIE_SECURE = True  # Use only with HTTPS
+CSRF_COOKIE_SECURE = True     # Use only with HTTPS
+SESSION_COOKIE_AGE = 1800  # 30 minutes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -176,3 +185,16 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# File permission configuration
+log_file_path = BASE_DIR / 'debug.log'
+if os.path.exists(log_file_path):
+    try:
+        os.chmod(log_file_path, 0o600)  # Set read/write for owner only
+    except PermissionError:
+        print("Warning: Could not change permissions for the log file.")
+else:
+    # Create the file if it doesn't exist
+    with open(log_file_path, 'w'):
+        pass
+    os.chmod(log_file_path, 0o600)
