@@ -5,7 +5,6 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth.models import User
-from datetime import timedelta
 
 from .models import Question, Choice, Vote
 

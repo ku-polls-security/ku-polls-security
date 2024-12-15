@@ -2,19 +2,31 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
+from unittest.mock import patch
 
 
 class AuthSystemTests(TestCase):
 
-    def test_signup_successful(self):
+    @patch('captcha.fields.CaptchaField.clean')  # Correct the patch to the simple-captcha field
+    def test_signup_successful(self, mock_captcha):
         """Test that a user can sign up successfully with valid data."""
+
+        # Mock the CAPTCHA validation to return a valid response
+        mock_captcha.return_value = None
+
         response = self.client.post(reverse('polls:signup'), {
             'username': 'testuser',
             'password1': 'ValidPassword1!',
-            'password2': 'ValidPassword1!'
+            'password2': 'ValidPassword1!',
+            'captcha': 'valid-captcha-response'  # Simulate a valid CAPTCHA response
         })
 
+        # Debugging: Check if response is a redirect (302)
+        print(response.status_code)
+        print(response.content)
+
         # Check redirection to the index page
+        self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('polls:index'))
 
         # Check that the user was created
