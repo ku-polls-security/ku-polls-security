@@ -190,7 +190,7 @@ AXES_COOLOFF_TIME = 1  # Lockout time in hours
 AXES_ONLY_USER_FAILURES = True
 
 if 'test' in sys.argv:
-    AXES_ENABLED = True
+    AXES_ENABLED = False
 
 PASSWORD_HISTORY_COUNT = 5  # Prevent reuse of last 5 passwords
 
