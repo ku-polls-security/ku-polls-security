@@ -7,3 +7,4 @@ django-axes==5.36.0
 django-password-history
 django-simple-captcha
 django-sslserver
+requests
