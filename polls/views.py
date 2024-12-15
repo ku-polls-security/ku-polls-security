@@ -13,6 +13,9 @@ import logging
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.contrib.auth.signals import user_login_failed
 from django.dispatch import receiver
+from .forms import UsernameChangeForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 from .models import Choice, Question, Vote
 
@@ -288,3 +291,39 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR', '').strip()
     return ip
+
+
+@login_required
+def change_username(request):
+    if request.method == 'POST':
+        form = UsernameChangeForm(request.POST, user=request.user)  # Pass user to the form
+        if form.is_valid():
+            new_username = form.cleaned_data['new_username']
+            user = request.user
+            user.username = new_username
+            user.save()
+            messages.success(request, "Your username has been successfully updated.")
+            return redirect('polls:index')  # Or wherever you want to redirect
+    else:
+        form = UsernameChangeForm()
+
+    return render(request, 'registration/change_username.html', {'form': form})
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            messages.success(request, "Your password was successfully updated.")
+            return redirect('polls:index')  # Or wherever you want to redirect
+    else:
+        form = PasswordChangeForm(user=request.user)
+    return render(request, 'registration/change_password.html', {'form': form})
+
+
+@login_required
+def user_manage(request):
+    return render(request, 'registration/user_manage.html')
