@@ -48,8 +48,3 @@ jobs:
     - name: Generate coverage report
       run: |
         coverage report
-
-    - name: Show test output
-      run: |
-        cat /tmp/test-output.log
-
