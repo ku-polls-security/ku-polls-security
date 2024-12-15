@@ -198,7 +198,7 @@ def signup(request):
     """Register a new user."""
 
     if not request.session.get('consent_given', False):
-        # return render(request, 'registration/signup.html', {'form': None})  # Display the consent modal
+        messages.error(request, "You must agree to our policy to register.")
         return redirect('signup')
     
     if request.method == 'POST':
@@ -210,11 +210,6 @@ def signup(request):
                 request, f"Account created successfully for {user.username}!"
                 )
             return redirect('login')  # Redirect to the login page
-        else:
-            messages.error(
-                request,
-                "There was an error with your submission. Please try again."
-                )
     else:
         form = UserCreationForm()
 
