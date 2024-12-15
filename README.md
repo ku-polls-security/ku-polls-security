@@ -28,9 +28,9 @@ python manage.py runsslserver --certificate certs/127.0.0.1+1.pem --key certs/12
 ** Please make sure that your path is in the ku-polls directory.
 
 ## Demo Admin
-| Username  | Password        | Email |
-|-----------|-----------------|-------|
-|   TestAdmin   | TestAdmin | Test@admin.com |
+| Username  | Password        |
+|-----------|-----------------|
+|   b6410540010   | Char.ar@ku.th3 |
 
 ## Demo Users
 | Username  | Password        |
