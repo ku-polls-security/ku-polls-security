@@ -17,7 +17,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
@@ -30,10 +31,24 @@ jobs:
         pip install coverage
         pip install -r requirements.txt
 
+    - name: Run database migrations
+      run: |
+        python manage.py makemigrations
+        python manage.py migrate
+
+    - name: Verify installed dependencies
+      run: |
+        pip list
+
     - name: Run tests with coverage
       run: |
-        coverage run --source='.' manage.py test
+        coverage run --source='.' manage.py test --verbosity=2
 
     - name: Generate coverage report
       run: |
         coverage report
+
+    - name: Show test output
+      run: |
+        cat /tmp/test-output.log
+
