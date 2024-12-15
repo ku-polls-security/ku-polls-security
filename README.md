@@ -10,13 +10,18 @@ https://cpske.github.io/ISP) course at [Kasetsart University](https://www.ku.ac.
 
 ## Installation
 
-Installation : follow the step in [Installation](https://github.com/TAGCH/ku-polls/blob/iteration4/Installation.md)
+Installation : follow the step in [Installation](https://github.com/ku-polls-security/ku-polls-security/blob/main/Installation.md)
+
+## Certificate Creation
+
+Installation : follow the step in [Certificate Creation](https://github.com/ku-polls-security/ku-polls-security/blob/main/CertificateCreation.md)
 
 ## Running the Application
 
 Running : run by typing this code in your terminal, cmd or powershell.
+
 ```
-python manage.py runserver
+python manage.py runsslserver --certificate certs/127.0.0.1+1.pem --key certs/127.0.0.1+1-key.pem
 ```
 
 ** Please make sure that your path is in the ku-polls directory.
