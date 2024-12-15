@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic.base import RedirectView
 from django.contrib.auth import views as auth_views
-from django.conf.urls import handler404, handler500
 
 from polls import views
 

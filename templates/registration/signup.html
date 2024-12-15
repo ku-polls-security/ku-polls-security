@@ -79,10 +79,26 @@
             text-align: left;
             font-size: 0.9em;
             margin-top: 5px;
+        }
+        .btn-primary: {
+            background-color: #d4bf77;
+            color: #fff;
+            font-size: 1.2em;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-shadow: 0 0 5px #000000;
+        }
+        .btn-primary:hover {
+            background-color: #b39b00;
+        }
         .btn-primary:disabled {
             pointer-events: none;
-            opacity: 0.65;
-            background-color: white;
+            opacity: 0.25;
+            background-color: #d4bf77
             color: white;
             cursor: not-allowed;
             border: none;
@@ -308,9 +324,6 @@
             const consentForm = document.getElementById('consentForm');
             const registerButton = document.querySelector('button[type="submit"]');
             let consentGiven = false;
-
-            // Open the modal on page load
-            modal.show();
 
             registerButton.disabled = true;
 

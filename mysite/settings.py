@@ -96,7 +96,7 @@ SECURE_HSTS_PRELOAD = True
 SECURE_SSL_REDIRECT = False  # Redirect HTTP to HTTPS
 SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME sniffing
 SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filter
-SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'  # Restrict referrer information
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 SESSION_COOKIE_SECURE = True  # Secure cookies with HTTPS
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
@@ -169,8 +169,8 @@ USE_TZ = True
 # Security related
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') == 'True'  # Use only with HTTPS
-CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'True') == 'True'     # Use only with HTTPS
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') == 'True'
+CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'True') == 'True'
 SESSION_COOKIE_AGE = 1800  # 30 minutes
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_HTTPONLY = True
