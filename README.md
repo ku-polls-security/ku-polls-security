@@ -35,9 +35,8 @@ python manage.py runsslserver --certificate certs/127.0.0.1+1.pem --key certs/12
 ## Demo Users
 | Username  | Password        |
 |-----------|-----------------|
-|   Test01   | Test01 |
-|   Test02   | Test02 |
-|   Test03   | Test03 |
+|   b6410540000   | Char.ar@ku.th1 |
+|   b6410540001   | Char.ar@ku.th2 |
 
 ## Project Documents
 
